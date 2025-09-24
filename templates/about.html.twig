@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}About Us - Hotel Diongco{% endblock %}
+
+{% block body %}
+
+<section class="relative h-[500px] overflow-hidden">
+  <div class="absolute inset-0 w-full h-full">
+    <div class="absolute inset-0 bg-cover bg-center"
+         style="background-image: linear-gradient(rgba(0, 20, 77, 0.6), rgba(0,1,34,0.6)), url('{{ asset('images/hotelpatterned.png') }}');">
+    </div>
+  </div>
+
+  <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-6">
+    <h1 style="font-family:'Cinzel', serif;" class="text-6xl font-thin text-white mb-4 opacity-100">
+      ABOUT US
+    </h1>
+  </div>
+</section>
+
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-6 flex flex-col md:flex-row items-center gap-8">
+    <div class="md:w-1/2">
+      <h2 style="font-family:'Cinzel', serif;" class="text-4xl font-thin mb-6">About Hotel Diongco</h2>
+      <p class="helvetica-condensed text-[rgb(67,85,145)] mb-4">
+        Hotel Diongco is a premier 4-star hospitality property located in the heart of Dumaguete City. Opened in 2010, our hotel combines contemporary elegance with warm, personalized service. Nestled in a prime location, it offers stunning city views and convenient access to local attractions.
+      </p>
+      <p class="helvetica-condensed text-[rgb(67,85,145)] mb-4">
+        Designed to meet the needs of both business and leisure travelers, every room, suite, and amenity is thoughtfully crafted to deliver comfort, sophistication, and modern convenience. From luxurious guestrooms to exceptional dining experiences and world-class facilities, Hotel Diongco provides a stay that is both inspiring and memorable.
+      </p>
+      <p class="helvetica-condensed text-[rgb(67,85,145)]">
+        Our commitment to excellence ensures that every visit exceeds expectations, whether it is a first-time stay or a returning experience. At Hotel Diongco, we bring a global standard of hospitality, blending safety, comfort, and outstanding service to make every guest feel valued and at home.
+      </p>
+    </div>
+    <div class="md:w-1/2">
+      <img src="{{ asset('images/hotel.png') }}" alt="Hotel View" class="rounded-lg shadow-lg object-cover w-full h-full">
+    </div>
+  </div>
+</section>
+
+<section class="py-16 container mx-auto px-6">
+  <h2 style="font-family:'Cinzel', serif;" class="text-3xl font-thin mb-6">Our Mission & Vision</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="bg-white p-6 rounded-xl shadow-md">
+      <h3 class="helvetica-condensed text-xl font-semibold mb-2">Mission</h3>
+      <p class="helvetica-condensed text-[rgb(67,85,145)]">{{ hotel.mission }}</p>
+    </div>
+    <div class="bg-white p-6 rounded-xl shadow-md">
+      <h3 class="helvetica-condensed text-xl font-semibold mb-2">Vision</h3>
+      <p class="helvetica-condensed text-[rgb(67,85,145)]">{{ hotel.vision }}</p>
+    </div>
+  </div>
+</section>
+
+<section class="py-16 bg-gray-50 text-center">
+  <h2 style="font-family:'Cinzel', serif;" class="text-3xl font-thin mb-4">Experience Hotel Diongco</h2>
+  <p class="helvetica-condensed text-[rgb(67,85,145)] mb-6">
+    Luxury rooms, exceptional service, and world-class amenities await you.
+  </p>
+  <a href="{{ path('homepage') }}" class="inline-block px-8 py-3 bg-[rgb(29,53,153)] text-white rounded-lg hover:bg-[rgb(242,182,34)] transition-colors">
+    Book Now
+  </a>
+</section>
+
+{% endblock %}
