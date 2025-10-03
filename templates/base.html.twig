@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>{% block title %}Hotel Diongco{% endblock %}</title>
+  {% block stylesheets %}
+      {{ encore_entry_link_tags('app') }}
+    {% endblock %}
 
-
-  <script src="https://cdn.tailwindcss.com"></script>
+  {#<script src="https://cdn.tailwindcss.com"></script>#}
   <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@100;400;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="{{ asset('images/logo.svg') }}">
-  {% block stylesheets %}{% endblock %}
 </head>
 <body class="bg-gray-50 text-gray-800 antialiased">
 

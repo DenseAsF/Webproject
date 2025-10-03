@@ -18,3 +18,12 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+twig:
+    globals:
+        business: 
+            name: 'Hotel Diongco'
+            tagline: 'Where comfort meets elegance.'
+            address: 'Rizal Avenue, Dumaguete City, Negros Oriental, Philippines'
+            email: 'reservations@hoteldiongco.ph'
+            phone: '+63 969 6969 696'
+            social: '@HotelDiongco (Facebook & Instagram)'
