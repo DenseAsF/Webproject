@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}Hotel Diongco{% endblock %}</title>
+
+{% block stylesheets %} {{ encore_entry_link_tags('app') }}{% endblock %}
+           
+  {# <link rel="stylesheet" href="{{ asset('css/styles.css') }}"> #}
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@100;400;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="{{ asset('images/logo.svg') }}">
+ 
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased">
+
+  
+  <header class="bg-white sticky top-0 z-50 shadow-md">
+    <div class="container mx-auto px-6 py-4 flex items-center justify-between relative">
+      <a href="{{ path('homepage') }}" class="flex items-center gap-3">
+        <img src="{{ asset('images/logo.svg') }}" alt="Hotel Diongco Logo" class="w-12 h-12 object-contain mb-2">
+        <div>
+          <div style="font-family: 'Cinzel', serif;" class="text-xl font-thin">Hotel Diongco ADMIN</div>
+        </div>
+      </a>
+
+      <div class="flex items-center gap-6 helvetica-condensed">
+      <nav class="space-x-4 hidden md:block">
+ <a href="{{ path('room_new') }}" 
+   class="hover:text-[rgb(242,182,34)] {% if app.request.attributes.get('_route') == 'room_new' %}text-[rgb(242,182,34)] font-semibold{% endif %}">
+   Create
+</a>
+  <a href="{{ path('room_index') }}" 
+     class="hover:text-[rgb(242,182,34)] {% if app.request.attributes.get('_route') == 'room_index' %}text-[rgb(242,182,34)] font-semibold{% endif %}">
+     View
+  </a>
+
+</nav>
+
+             </div>
+    </div>
+  </header>
+
+
+  <main class="relative min-h-screen">
+    
+    <div class="absolute inset-0 bg-[url('/images/pattern.png')] bg-repeat bg-center opacity-30 pointer-events-none"></div>
+
+    <div class="relative z-10">
+        {% block body %}{% endblock %}
+    </div>
+</main>
+
+
+  <footer class="bg-white mt-16 border-t">
+    <div class="container mx-auto px-6 py-10 grid md:grid-cols-3 gap-6">
+   
+    </div>
+    <div class="text-center py-4 text-xs text-gray-500">© {{ "now"|date("Y") }} Hotel Diongco</div>
+  </footer>
+
+  {% block javascripts %}
+            {{ encore_entry_script_tags('app') }}
+    <script src="{{ asset('script/script.js') }}"></script>
+  {% endblock %}
+</body>
+</html>

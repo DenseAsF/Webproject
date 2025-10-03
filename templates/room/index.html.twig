@@ -1,0 +1,48 @@
+{% extends 'adminbase.html.twig' %}
+
+{% block title %}Room Index{% endblock %}
+
+{% block body %}
+<div class="max-w-6xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Rooms</h1>
+        <a href="{{ path('room_new') }}" class="bg-[rgb(29,53,153)] text-white px-4 py-2 rounded-md hover:bg-[rgb(242,182,34)] transition">
+            Create New Room
+        </a>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Room Number</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Room Type</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Max People</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+            {% for room in rooms %}
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ room.id }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ room.roomNumber }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ room.roomType.name }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ room.maxPeople }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">₱ {{ room.price|number_format(2, '.', ',') }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap space-x-2">
+                        <a href="{{ path('room_show', {'id': room.id}) }}" class="text-blue-600 hover:underline">Show</a>
+                        <a href="{{ path('room_edit', {'id': room.id}) }}" class="text-green-600 hover:underline">Edit</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5" class="px-6 py-4 text-center text-gray-500">No records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
