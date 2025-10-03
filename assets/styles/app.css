@@ -1,8 +1,10 @@
 @import "tailwindcss";
+@source "../../templates/**/*.{twig,html}";
+@source "../../src/**/*.php";
 @source not "../../public";
 
 
-/* body {
+body {
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
   color: rgb(6, 32, 104) !important;
 }
@@ -27,4 +29,4 @@
 
 .testcolor{
  color: rgb(67, 85, 145);
-} */
+}
