@@ -1,34 +1,55 @@
 {% extends 'adminbase.html.twig' %}
 
-{% block title %}Room{% endblock %}
+{% block title %}Room Details{% endblock %}
 
 {% block body %}
-    <h1>Room</h1>
+<div class="flex justify-center mt-12">
+  <div class="w-full max-w-xl bg-white shadow-lg rounded-lg p-8 helvetica-condensed">
+   <h1 class="text-2xl font-bold mb-8 text-center">Room Details</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ room.id }}</td>
-            </tr>
-            <tr>
-                <th>RoomNumber</th>
-                <td>{{ room.roomNumber }}</td>
-            </tr>
-            <tr>
-                <th>MaxPeople</th>
-                <td>{{ room.maxPeople }}</td>
-            </tr>
-            <tr>
-                <th>Price</th>
-                <td>{{ room.price }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <dl class="grid grid-cols-1 gap-6">
+      <div>
+        <dt class="helvetica-condensed text-sm font-medium text-gray-500">Room Number</dt>
+        <dd class="helvetica-condensed mt-1 text-lg font-semibold">{{ room.roomNumber }}</dd>
+      </div>
 
-    <a href="{{ path('room_index') }}">back to list</a>
+      <div>
+        <dt class="text-sm font-medium text-gray-500">Room Type</dt>
+        <dd class="helvetica-condensed mt-1 text-lg font-semibold">{{ room.roomType.name }}</dd>
+      </div>
 
-    <a href="{{ path('room_edit', {'id': room.id}) }}">edit</a>
+      <div>
+        <dt class="helvetica-condensed text-sm font-medium text-gray-500">Max People</dt>
+        <dd class="helvetica-condensed mt-1 text-lg font-semibold ">{{ room.maxPeople }}</dd>
+      </div>
 
-    {{ include('room/_delete_form.html.twig') }}
+      <div>
+        <dt class="helvetica-condensed text-sm font-medium text-gray-500">Price</dt>
+        <dd class="helvetica-condensed mt-1 text-lg font-semibold">₱{{ room.price }}</dd>
+      </div>
+
+      <div>
+        <dt class="helvetica-condensed text-sm font-medium text-gray-500">Status</dt>
+        <dd class="helvetica-condensed mt-1 text-lg font-semibold">{{ room.status.name }}</dd>
+      </div>
+    </dl>
+
+    <div class="mt-8 flex justify-between items-center">
+      <a href="{{ path('room_index') }}" 
+         class="helvetica-condensed px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md">
+        ← Back to list
+      </a>
+
+      <div class="flex gap-1">
+        <a href="{{ path('room_edit', {'id': room.id}) }}" 
+           class="helvetica-condensed px-4 py-2 bg-[rgb(29,53,153)] hover:bg-[rgb(242,182,34)] text-white rounded-md">
+          Edit
+        </a>
+
+        <div class="helvetica-condensed mt-2 text-red"> {{ include('room/_delete_form.html.twig') }}</div>
+   
+      </div>    
+    </div>
+  </div>
+</div>
 {% endblock %}

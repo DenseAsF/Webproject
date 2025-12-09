@@ -1,0 +1,116 @@
+{% extends 'adminbase.html.twig' %}
+
+{% block title %}Booking History{% endblock %}
+
+{% block body %}
+<div class="max-w-7xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+    <div class="flex justify-between items-center mb-6 helvetica-condensed">
+        <h1 class="text-2xl font-bold">Booking History</h1>
+    </div>
+
+    <div class="mb-6 p-4 bg-gray-50 rounded-lg helvetica-condensed">
+        <form method="get" action="{{ path('booking_history') }}" class="grid grid-cols-1 lg:grid-cols-5 gap-3 items-end">
+            
+        {# search yawa #}
+            <div class="lg:col-span-2 flex-1 min-w-0">
+                <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Booking ID</label>
+                <input type="text" 
+                       id="search" 
+                       name="search" 
+                       value="{{ app.request.query.get('search') }}" 
+                       placeholder="Search ID..."
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+            </div>
+
+       
+        <div class="flex-1 min-w-0">
+                <label for="startDate" class="block text-sm font-medium text-gray-700 mb-1">From</label>
+                <input type="date" 
+                       id="startDate" 
+                       name="startDate" 
+                       value="{{ app.request.query.get('startDate') }}" 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+            </div>
+
+          
+            <div class="flex-1 min-w-0">
+                <label for="endDate" class="block text-sm font-medium text-gray-700 mb-1">To</label>
+                <input type="date" 
+                       id="endDate" 
+                       name="endDate" 
+                       value="{{ app.request.query.get('endDate') }}" 
+                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+            </div>
+
+<div class="flex gap-2 lg:col-span-1 flex-1 min-w-0">
+                <button type="submit" 
+                        class="flex-1 bg-[rgb(29,53,153)] text-white px-3 py-2 rounded-md hover:bg-[rgb(242,182,34)] transition text-sm whitespace-nowrap">
+                    Apply
+                </button>
+                <a href="{{ path('booking_history') }}" 
+                   class="flex-1 bg-gray-500 text-white rounded-md px-3 py-2 hover:bg-gray-600 transition text-sm whitespace-nowrap text-center flex items-center justify-center">
+                    Clear
+                </a>
+            </div>
+
+        </form>
+
+      
+
+    <div class="mb-4 helvetica-condensed mt-5">
+        <p class="text-sm text-gray-600">
+            Showing {{ bookings|length }} booking(s)
+            {% if app.request.query.get('search') or app.request.query.get('startDate') or app.request.query.get('endDate') %}
+                (filtered)
+            {% endif %}
+        </p>
+    </div>
+
+    <div class="helvetica-condensed overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Booking ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Room</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Check In</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Check Out</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Price</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for booking in bookings %}
+                    <tr class="helvetica-condensed hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap font-medium">{{ booking.originalBookingId }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ booking.customerName }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ booking.roomNumber }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ booking.checkInDate|date('Y-m-d') }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ booking.checkOutDate|date('Y-m-d') }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">₱{{ booking.totalPrice|number_format(2) }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <form action="{{ path('booking_history_delete', {'id': booking.id}) }}" method="post" class="inline">
+                                    <a href="{{ path('booking_history_show', {'id': booking.id}) }}" class="text-blue-600 hover:text-blue-900 hover:underline">
+        Show 
+    </a>
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ booking.id) }}">
+                                <button type="submit" class="text-red-600 hover:text-red-900 hover:underline">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="helvetica-condensed px-6 py-4 text-center text-red-600">
+                            {% if app.request.query.get('search') or app.request.query.get('startDate') or app.request.query.get('endDate') %}
+                                No booking history found matching your filters.
+                            {% else %}
+                                No booking history found
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}  

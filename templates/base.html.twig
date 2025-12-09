@@ -8,8 +8,6 @@
       {{ encore_entry_link_tags('app') }}
     {% endblock %}
 
-  {#<script src="https://cdn.tailwindcss.com"></script>#}
-  {# <link rel="stylesheet" href="{{ asset('css/styles.css') }}"> #}
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@100;400;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" href="{{ asset('images/logo.svg') }}">
 </head>
@@ -35,9 +33,17 @@
      class="hover:text-[rgb(242,182,34)] {% if app.request.attributes.get('_route') == 'about' %}text-[rgb(242,182,34)] font-semibold{% endif %}">
      About
   </a>
-  <a href="#services" class="hover:text-[rgb(242,182,34)]">Services</a>
+    <a href="{{ path('service') }}" 
+     class="hover:text-[rgb(242,182,34)] {% if app.request.attributes.get('_route') == 'app_services' %}text-[rgb(242,182,34)] font-semibold{% endif %}">
+     Services
+  </a>
   <a href="#rooms" class="hover:text-[rgb(242,182,34)]">Rooms</a>
+
   <a href="#contact" class="hover:text-[rgb(242,182,34)]">Contact</a>
+
+   <a href="{{ path('login') }}" 
+     class="font-bold hover:text-[rgb(242,182,34)] {% if app.request.attributes.get('_route') == 'login' %}text-[rgb(242,182,34)] {% endif %}">
+     Log In</a>
 </nav>
 
         <a href="{{ path('homepage') }}" class="bg-[rgb(29,53,153)] hover:bg-[rgb(242,182,34)] transition-colors text-white px-4 py-2 rounded-lg">Book Now</a>

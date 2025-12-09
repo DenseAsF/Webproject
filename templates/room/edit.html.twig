@@ -3,11 +3,79 @@
 {% block title %}Edit Room{% endblock %}
 
 {% block body %}
-    <h1>Edit Room</h1>
+<div class="flex justify-center mt-12 helvetica-condensed">
+  <div class="w-full max-w-xl bg-white shadow-lg rounded-lg p-8">
+    <h1 class="text-2xl font-bold mb-8 text-center">Edit Room</h1>
 
-    {{ include('room/_form.html.twig', {'button_label': 'Update'}) }}
+    {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
 
-    <a href="{{ path('room_index') }}">back to list</a>
+      <div>
+        {{ form_label(form.roomNumber, 'Room Number', {'label_attr': {'class': 'block text-sm font-medium text-[rgb(67,85,145)]'}}) }}
+        {{ form_widget(form.roomNumber, {
+          'attr': {
+            'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500',
+            'placeholder': 'Enter room number'
+          }
+        }) }}
+        {% for error in form.roomNumber.vars.errors %}
+       <p class="text-sm text-red-600 mt-1">{{ error.message }}</p>
+       {% endfor %}
+      </div>
 
-    {{ include('room/_delete_form.html.twig') }}
+      <div>
+        {{ form_label(form.maxPeople, 'Max People', {'label_attr': {'class': 'block text-sm font-medium text-[rgb(67,85,145)]'}}) }}
+        {{ form_widget(form.maxPeople, {
+          'attr': {
+            'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500',
+            'placeholder': 'Number of people'
+          }
+        }) }}
+        {% for error in form.maxPeople.vars.errors %}
+       <p class="text-sm text-red-600 mt-1">{{ error.message }}</p>
+       {% endfor %}
+      </div>
+
+      <div>
+        {{ form_label(form.price, 'Price (PHP)', {'label_attr': {'class': 'block text-sm font-medium text-[rgb(67,85,145)]'}}) }}
+        {{ form_widget(form.price, {
+          'attr': {
+            'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500',
+            'placeholder': 'Enter price'
+          }
+        }) }}
+        {{ form_errors(form.price) }}
+      </div>
+
+      <div>
+        {{ form_label(form.roomType, 'Room Type', {'label_attr': {'class': 'block text-sm font-medium text-[rgb(67,85,145)]'}}) }}
+        {{ form_widget(form.roomType, {
+          'attr': {
+            'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
+          }
+        }) }}
+        {{ form_errors(form.roomType) }}
+      </div>
+
+      <div>
+        {{ form_label(form.status, 'Status', {'label_attr': {'class': 'block text-sm font-medium text-[rgb(67,85,145)]'}}) }}
+        {{ form_widget(form.status, {
+          'attr': {
+            'class': 'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'
+          }
+        }) }}
+        {{ form_errors(form.status) }}
+      </div>
+
+      <div class="flex justify-between items-center mt-8">
+        <a href="{{ path('room_index') }}" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md">
+          Cancel
+        </a>
+        <button type="submit" class="px-5 py-2 bg-[rgb(29,53,153)] hover:bg-[rgb(242,182,34)] text-white rounded-md">
+          Save changes
+        </button>
+      </div>
+
+    {{ form_end(form) }}
+  </div>
+</div>
 {% endblock %}

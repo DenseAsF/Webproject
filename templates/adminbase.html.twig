@@ -2,66 +2,100 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Hotel Diongco{% endblock %}</title>
 
-{% block stylesheets %} {{ encore_entry_link_tags('app') }}{% endblock %}
+  {% block stylesheets %} 
+      {{ encore_entry_link_tags('app') }}
+  {% endblock %}
            
-  {# <link rel="stylesheet" href="{{ asset('css/styles.css') }}"> #}
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@100;400;700&display=swap" rel="stylesheet">
-<link rel="icon" type="image/png" href="{{ asset('images/logo.svg') }}">
- 
+  <link rel="icon" type="image/png" href="{{ asset('images/logo.svg') }}">
 </head>
-<body class="bg-gray-50 text-gray-800 antialiased">
 
-  
-  <header class="bg-white sticky top-0 z-50 shadow-md">
-    <div class="container mx-auto px-6 py-4 flex items-center justify-between relative">
-      <a href="{{ path('homepage') }}" class="flex items-center gap-3">
-        <img src="{{ asset('images/logo.svg') }}" alt="Hotel Diongco Logo" class="w-12 h-12 object-contain mb-2">
+<body class="bg-gray-50 text-gray-800 antialiased flex">
+
+
+
+<aside class="w-64 min-h-screen bg-[rgb(29,53,153)] flex flex-col shadow-lg sticky top-0">
+
+    <div class="p-6 flex items-center gap-3 border-b bg-white border-blue-800">
+        <img src="{{ asset('images/logo.svg') }}" class="w-12 h-12 object-contain">
         <div>
-          <div style="font-family: 'Cinzel', serif;" class="text-xl font-thin">Hotel Diongco ADMIN</div>
+            <div style="font-family: 'Cinzel', serif;" class="text-lg font-light leading-tight">
+                Hotel Diongco  
+            </div>
+
+            {% if is_granted('ROLE_ADMIN') %}  
+            <div class="text-xs opacity-80 helvetica-condensed">
+                ADMIN PANEL
+            </div>
+            {% endif %}
+                {% if is_granted('ROLE_STAFF') %}  
+            <div class="text-xs opacity-80 helvetica-condensed">
+                STAFF PANEL
+            </div>
+            {% endif %}
         </div>
-      </a>
-
-      <div class="flex items-center gap-6 helvetica-condensed">
-      <nav class="space-x-4 hidden md:block">
- <a href="{{ path('room_new') }}" 
-   class="hover:text-[rgb(242,182,34)] {% if app.request.attributes.get('_route') == 'room_new' %}text-[rgb(242,182,34)] font-semibold{% endif %}">
-   Create
-</a>
-  <a href="{{ path('room_index') }}" 
-     class="hover:text-[rgb(242,182,34)] {% if app.request.attributes.get('_route') == 'room_index' %}text-[rgb(242,182,34)] font-semibold{% endif %}">
-     View
-  </a>
-
-</nav>
-
-             </div>
     </div>
-  </header>
+
+    <nav class="flex flex-col p-4 space-y-2 helvetica-condensed text-white text-sm">
 
 
-  <main class="relative min-h-screen">
-    
-    {# <div class="absolute inset-0 bg-[url('/images/pattern.png')] bg-repeat bg-center opacity-30 pointer-events-none"></div> #}
+        <a href="{{ path('booking_index') }}"
+           class="px-4 py-2 rounded hover:bg-[rgb(242,182,34)] 
+           {% if app.request.attributes.get('_route') starts with 'booking' %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">
+            Bookings
+        </a>
+  {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('room_index') }}"
+           class="px-4 py-2 rounded hover:bg-[rgb(242,182,34)]
+           {% if app.request.attributes.get('_route') == 'room_index' %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">
+            Rooms
+        </a>
 
-    <div class="relative z-10">
+         <a href="{{ path('user_index') }}"
+           class="px-4 py-2 rounded hover:bg-[rgb(242,182,34)]
+           {% if app.request.attributes.get('_route') == 'app_user_index' %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">
+            Users
+        </a>
+
+        <a href="{{ path('booking_history') }}"
+           class="px-4 py-2 rounded hover:bg-[rgb(242,182,34)]
+           {% if app.request.attributes.get('_route') == 'booking_history' %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">
+            History
+        </a>
+{% endif %}
+
+   <a href="{{ path('app_logout') }}"
+   class="inline-block px-4 py-2 rounded hover:bg-red-600">
+    Logout
+</a>
+    </nav>
+
+</aside>
+
+<main class="flex-1 relative min-h-screen">
+
+    <div class="absolute inset-0 bg-[url('../../public/images/pattern.png')] bg-repeat opacity-30 pointer-events-none"></div>
+
+    <div class="relative z-10 p-6">
         {% block body %}{% endblock %}
     </div>
+
+    <footer class="bg-white mt-16 border-t">
+        <div class="text-center py-4 text-xs text-gray-500">
+            © {{ "now"|date("Y") }} Hotel Diongco
+        </div>
+    </footer>
+
 </main>
 
 
-  <footer class="bg-white mt-16 border-t">
-    <div class="container mx-auto px-6 py-10 grid md:grid-cols-3 gap-6">
-   
-    </div>
-    <div class="text-center py-4 text-xs text-gray-500">© {{ "now"|date("Y") }} Hotel Diongco</div>
-  </footer>
-
-  {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
     <script src="{{ asset('script/script.js') }}"></script>
-  {% endblock %}
+{% endblock %}
+
 </body>
 </html>

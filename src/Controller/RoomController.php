@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Room;
 use App\Form\RoomForm;
 use App\Repository\RoomRepository;
+use App\Repository\RoomTypeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,16 +13,30 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/room')]
-final class RoomController extends AbstractController
+class RoomController extends AbstractController
 {
     #[Route(name: 'room_index', methods: ['GET'])]
-    public function index(RoomRepository $roomRepository): Response
-    {
+    public function index(
+        Request $request, 
+        RoomRepository $roomRepository,
+        RoomTypeRepository $roomTypeRepository
+    ): Response {
+        $availability = $request->query->get('availability');
+        $roomTypeId = $request->query->get('roomType');
+        $search = $request->query->get('search'); // Get search parameter
+
+        // Pass all parameters including search to the repository
+        $rooms = $roomRepository->findByFilters($availability, $roomTypeId, $search);
+
+        $roomTypes = $roomTypeRepository->findAll();
+
         return $this->render('room/index.html.twig', [
-            'rooms' => $roomRepository->findAll(),
+            'rooms' => $rooms,
+            'roomTypes' => $roomTypes,
         ]);
     }
 
+    // ... rest of your controller methods remain the same
     #[Route('/new', name: 'room_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {

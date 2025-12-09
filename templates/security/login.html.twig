@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Log in{% endblock %}
+
+{% block body %}
+
+<div class="flex justify-center items-center min-h-screen bg-gray-100">
+
+    <div class="w-2xl max-w-2xl bg-white rounded-xl shadow-xl p-8">
+
+        <h2 class="text-2xl font-bold mb-6 text-center">Sign In</h2>
+
+        {% if error %}
+            <div class="bg-red-100 border border-red-400 text-red-700 p-3 mb-4 rounded">
+                {{ error.messageKey|trans(error.messageData, 'security') }}
+            </div>
+        {% endif %}
+
+        {% if app.user %}
+            <div class="mb-3 text-center">
+                You are logged in as <b>{{ app.user.userIdentifier }}</b> <br>
+                <a href="{{ path('app_logout') }}" class="text-red-600 hover:underline">Logout</a>
+            </div>
+        {% endif %}
+
+        <form method="post" action="{{ path('login') }}">
+
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-1" for="inputUsername">Username</label>
+                <input
+                    type="text"
+                    id="inputUsername"
+                    name="_username"  
+                    value="{{ last_username }}"
+                    required
+                    autofocus
+                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-400"
+                >
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-1" for="inputPassword">Password</label>
+                <input
+                    type="password"
+                    id="inputPassword"
+                    name="_password" 
+                    required
+                    class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:border-blue-400"
+                >
+            </div>
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+            <div class="mb-6 flex items-center">
+                <input type="checkbox" name="_remember_me" class="mr-2">
+                <span class="text-gray-600">Remember me</span>
+            </div>
+
+            <button
+                type="submit"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition"
+            >
+                Log In
+            </button>
+
+        </form>
+    </div>
+
+</div>
+
+{% endblock %}

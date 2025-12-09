@@ -3,43 +3,85 @@
 {% block title %}Create Room{% endblock %}
 
 {% block body %}
-<div class="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+<div class="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg helvetica-condensed">
     <h2 class="text-2xl font-bold mb-6">Create New Room</h2>
 
-    {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+
+    {{ form_start(form, {'attr': {'class': 'space-y-6'},    'novalidate': 'novalidate'}) }}
+
 
         <div>
             {{ form_label(form.roomNumber, 'Room Number', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
-            {{ form_widget(form.roomNumber, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'}}) }}
-            {{ form_errors(form.roomNumber) }}
+            {{ form_widget(form.roomNumber, {
+                'attr': {
+                    'class': 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ' ~ 
+                             (form.roomNumber.vars.errors|length > 0 ? 'border-red-500' : 'border-gray-300')
+                }
+            }) }}
+            {% for error in form.roomNumber.vars.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ error.message }}</p>
+            {% endfor %}
         </div>
 
+      
         <div>
             {{ form_label(form.maxPeople, 'Max People', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
-            {{ form_widget(form.maxPeople, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'}}) }}
-            {{ form_errors(form.maxPeople) }}
+            {{ form_widget(form.maxPeople, {
+                'attr': {
+                    'class': 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ' ~ 
+                             (form.maxPeople.vars.errors|length > 0 ? 'border-red-500' : 'border-gray-300')
+                }
+            }) }}
+            {% for error in form.maxPeople.vars.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ error.message }}</p>
+            {% endfor %}
         </div>
 
+       
         <div>
             {{ form_label(form.price, 'Price (PHP)', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
-            {{ form_widget(form.price, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'}}) }}
-            {{ form_errors(form.price) }}
+            {{ form_widget(form.price, {
+                'attr': {
+                    'class': 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ' ~ 
+                             (form.price.vars.errors|length > 0 ? 'border-red-500' : 'border-gray-300')
+                }
+            }) }}
+            {% for error in form.price.vars.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ error.message }}</p>
+            {% endfor %}
         </div>
 
+      
         <div>
             {{ form_label(form.roomType, 'Room Type', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
-            {{ form_widget(form.roomType, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'}}) }}
-            {{ form_errors(form.roomType) }}
+            {{ form_widget(form.roomType, {
+                'attr': {
+                    'class': 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ' ~ 
+                             (form.roomType.vars.errors|length > 0 ? 'border-red-500' : 'border-gray-300')
+                }
+            }) }}
+            {% for error in form.roomType.vars.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ error.message }}</p>
+            {% endfor %}
         </div>
 
+        
         <div>
             {{ form_label(form.status, 'Status', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
-            {{ form_widget(form.status, {'attr': {'class': 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'}}) }}
-            {{ form_errors(form.status) }}
+            {{ form_widget(form.status, {
+                'attr': {
+                    'class': 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ' ~ 
+                             (form.status.vars.errors|length > 0 ? 'border-red-500' : 'border-gray-300')
+                }
+            }) }}
+            {% for error in form.status.vars.errors %}
+                <p class="text-sm text-red-600 mt-1">{{ error.message }}</p>
+            {% endfor %}
         </div>
 
+   
         <div>
-            <button type="submit" class="w-full bg-[rgb(29,53,153)] text-white py-2 px-4 rounded-md hover:bg-[rgb(242,182,34)]">
+            <button type="submit" class="w-full bg-[rgb(29,53,153)] text-white py-2 px-4 rounded-md hover:bg-[rgb(242,182,34)] transition-colors">
                 Create Room
             </button>
         </div>

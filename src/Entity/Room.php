@@ -3,33 +3,64 @@
 namespace App\Entity;
 
 use App\Repository\RoomRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: RoomRepository::class)]
 class Room
 {
-    #[ORM\Id]
+   #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+
     #[ORM\Column(length: 100, nullable: false, unique: true)]
+    #[Assert\NotBlank(message: 'Room number is required.')]
+    #[Assert\Regex(
+        pattern: '/^\d+$/',
+        message: 'Room number must contain only numbers.'
+    )]
     private ?string $roomNumber = null;
 
+   
     #[ORM\Column]
+    #[Assert\NotBlank(message: 'Please enter the maximum number of people.')]
+    #[Assert\Range(
+        min: 1,
+        max: 8,
+        notInRangeMessage: 'The number of people must be between {{ min }} and {{ max }}.'
+    )]
     private ?int $maxPeople = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[Assert\NotBlank(message: 'Price is required.')]
+    #[Assert\Positive(message: 'Price must be a positive number.')]
     private ?string $price = null;
 
     #[ORM\ManyToOne(inversedBy: 'rooms')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: 'Please select a room type.')]
     private ?RoomType $roomType = null;
 
     #[ORM\ManyToOne(inversedBy: 'rooms')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: 'Please select a room status.')]
     private ?RoomStatus $status = null;
+
+    /**
+     * @var Collection<int, BookingRoom>
+     */
+    #[ORM\OneToMany(targetEntity: BookingRoom::class, mappedBy: 'room')]
+    private Collection $bookingRooms;
+
+    public function __construct()
+    {
+        $this->bookingRooms = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -92,6 +123,36 @@ class Room
     public function setStatus(?RoomStatus $status): static
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, BookingRoom>
+     */
+    public function getBookingRooms(): Collection
+    {
+        return $this->bookingRooms;
+    }
+
+    public function addBookingRoom(BookingRoom $bookingRoom): static
+    {
+        if (!$this->bookingRooms->contains($bookingRoom)) {
+            $this->bookingRooms->add($bookingRoom);
+            $bookingRoom->setRoom($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBookingRoom(BookingRoom $bookingRoom): static
+    {
+        if ($this->bookingRooms->removeElement($bookingRoom)) {
+            // set the owning side to null (unless already changed)
+            if ($bookingRoom->getRoom() === $this) {
+                $bookingRoom->setRoom(null);
+            }
+        }
 
         return $this;
     }

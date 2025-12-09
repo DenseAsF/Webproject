@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20251003042129 extends AbstractMigration
+final class Version20251209070000 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -20,14 +20,12 @@ final class Version20251003042129 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE room CHANGE room_number room_number VARCHAR(100) NOT NULL');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_729F519BD7DED995 ON room (room_number)');
+        $this->addSql('ALTER TABLE user ADD created_at DATETIME NOT NULL');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('DROP INDEX UNIQ_729F519BD7DED995 ON room');
-        $this->addSql('ALTER TABLE room CHANGE room_number room_number VARCHAR(100) DEFAULT NULL');
+        $this->addSql('ALTER TABLE user DROP created_at');
     }
 }

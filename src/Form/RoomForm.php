@@ -18,8 +18,12 @@ class RoomForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
    $builder
-    ->add('roomNumber')
-    ->add('maxPeople')
+      ->add('roomNumber', TextType::class, [
+        'label' => 'Room Number',
+    ])
+    ->add('maxPeople', IntegerType::class, [
+        'label' => 'Max People',
+    ])
     ->add('price')
     ->add('roomType', EntityType::class, [
         'class' => RoomType::class,

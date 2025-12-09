@@ -22,7 +22,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: HotelDiongcoDB
+      MYSQL_DATABASE: hotelDiongcoDB
       MYSQL_USER: hoteluser
       MYSQL_PASSWORD: hotelpass
     ports:
@@ -41,6 +41,7 @@ services:
       PMA_PASSWORD: hotelpass
     ports:
       - "8080:80"
+  
     depends_on:
       - db
 

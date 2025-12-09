@@ -1,0 +1,322 @@
+{% extends 'adminbase.html.twig' %}
+
+{% block title %}Create Booking{% endblock %}
+
+{% block head %}
+    {{ parent() }}
+    <meta name="turbo-cache-control" content="no-cache">
+{% endblock %}
+
+{% block body %}
+<div class="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg helvetica-condensed">
+    <h2 class="text-2xl font-bold mb-6">Create New Booking</h2>
+
+  
+    {% for message in app.flashes('error') %}
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    {{ form_start(form, {
+        'attr': {
+            'class': 'space-y-6', 
+            'id': 'booking-form',
+            'data-turbo': 'false'
+        }, 
+        'novalidate': 'novalidate'
+    }) }}
+
+
+    <div>
+        {{ form_label(form.customerAccountNumber) }}
+        {{ form_widget(form.customerAccountNumber, {'attr': {'class':'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'}}) }}
+        {{ form_errors(form.customerAccountNumber) }}
+    </div>
+
+    <div>
+        {{ form_label(form.checkInDate) }}
+        {{ form_widget(form.checkInDate, {'attr': {'class':'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'}}) }}
+        {{ form_errors(form.checkInDate) }}
+    </div>
+
+    <div>
+        {{ form_label(form.checkOutDate) }}
+        {{ form_widget(form.checkOutDate, {'attr': {'class':'mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500'}}) }}
+        {{ form_errors(form.checkOutDate) }}
+    </div>
+
+    <div class="flex items-center gap-2">
+        <div class="flex-1">
+            <label for="roomsDropdown" class="block text-sm font-medium text-gray-700">Room</label>
+            
+            <select id="roomsDropdown" class="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                <option value="">Click "Look for Rooms" to see available rooms</option>
+            </select>
+            
+          
+            {{ form_widget(form.roomId, {'attr': {'id': 'roomId', 'class': 'hidden'}}) }}
+        </div>
+        <div class="mt-6">
+            <button type="button" id="lookRoomsBtn" class="bg-blue-700 text-white px-4 py-2 rounded-md hover:bg-yellow-500 transition-colors">
+                Look for Rooms
+            </button>
+        </div>
+    </div>
+
+   
+   <div>
+    <label class="block text-sm font-medium text-gray-700 mb-2">Services</label>
+    <div class="mt-2 space-y-2" id="servicesContainer">
+        {% for service in services %}
+            <div class="flex items-center">
+                <input type="checkbox" 
+                       id="service_{{ service.id }}" 
+                       name="services[]" 
+                       value="{{ service.id }}"
+                       class="service-checkbox h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                       data-price="{{ service.price }}">
+                <label for="service_{{ service.id }}" class="ml-2 text-sm text-gray-700">
+                    {{ service.name }} - ₱{{ service.price|number_format(2) }}
+                </label>
+            </div>
+        {% endfor %}
+    </div>
+</div>  
+
+
+    <div id="totalPriceSection" class="bg-gray-50 p-4 rounded-lg border border-gray-200 hidden">
+        <h3 class="text-lg font-semibold mb-2 text-gray-800">Booking Summary</h3>
+        <div class="space-y-2">
+            <div class="flex justify-between">
+                <span class="text-gray-600">Room Price:</span>
+                <span id="roomPrice" class="font-medium">₱0.00</span>
+            </div>
+            <div class="flex justify-between">
+                <span class="text-gray-600">Services:</span>
+                <span id="servicesPrice" class="font-medium">₱0.00</span>
+            </div>
+            <div class="flex justify-between border-t border-gray-300 pt-2 font-bold text-lg">
+                <span class="text-gray-800">Total:</span>
+                <span id="totalPrice" class="text-blue-700">₱0.00</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex gap-4 mt-8">
+        <button type="submit" id="submitBtn" class="flex-1 bg-[rgb(29,53,153)] text-white py-3 px-4 rounded-md hover:bg-[rgb(242,182,34)] transition-colors font-medium">
+            Save Booking
+        </button>
+        <a href="{{ path('booking_index') }}" class="flex-1 bg-gray-500 text-white py-3 px-4 rounded-md hover:bg-gray-600 transition-colors font-medium flex items-center justify-center no-underline">
+            Cancel
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const checkInInput = document.querySelector('#{{ form.checkInDate.vars.id }}');
+    const checkOutInput = document.querySelector('#{{ form.checkOutDate.vars.id }}');
+    const roomsDropdown = document.getElementById('roomsDropdown');
+    const roomIdInput = document.querySelector('#{{ form.roomId.vars.id }}');
+    const lookRoomsBtn = document.getElementById('lookRoomsBtn');
+    const form = document.getElementById('booking-form');
+    const totalPriceSection = document.getElementById('totalPriceSection');
+    const roomPriceElement = document.getElementById('roomPrice');
+    const servicesPriceElement = document.getElementById('servicesPrice');
+    const totalPriceElement = document.getElementById('totalPrice');
+    
+
+    let roomPrices = {};
+    let selectedRoomPrice = 0;
+    let selectedServicesPrice = 0;
+
+    
+    const servicePrices = {};
+
+
+    function initializeServicePrices() {
+        const serviceCheckboxes = document.querySelectorAll('.service-checkbox');
+        console.log('Found service checkboxes:', serviceCheckboxes.length);
+        
+        serviceCheckboxes.forEach(checkbox => {
+            const price = parseFloat(checkbox.getAttribute('data-price'));
+            servicePrices[checkbox.value] = price;
+            console.log('Service:', checkbox.value, 'Price:', price);
+            
+            
+            checkbox.addEventListener('change', calculateTotal);
+        });
+        
+        console.log('All service prices:', servicePrices);
+    }
+
+    function calculateTotal() {
+        const serviceCheckboxes = document.querySelectorAll('.service-checkbox');
+        
+
+        selectedServicesPrice = 0;
+        serviceCheckboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+                const price = servicePrices[checkbox.value];
+                if (price) {
+                    selectedServicesPrice += price;
+                    console.log('Adding service:', checkbox.value, 'Price:', price);
+                }
+            }
+        });
+
+        console.log('Services total:', selectedServicesPrice);
+        console.log('Room price:', selectedRoomPrice);
+
+       
+        roomPriceElement.textContent = `₱${selectedRoomPrice.toFixed(2)}`;
+        servicesPriceElement.textContent = `₱${selectedServicesPrice.toFixed(2)}`;
+        
+        const total = selectedRoomPrice + selectedServicesPrice;
+        totalPriceElement.textContent = `₱${total.toFixed(2)}`;
+
+       
+        if (selectedRoomPrice > 0 || selectedServicesPrice > 0) {
+            totalPriceSection.classList.remove('hidden');
+        } else {
+            totalPriceSection.classList.add('hidden');
+        }
+    }
+
+    lookRoomsBtn.addEventListener('click', async function() {
+        const checkIn = checkInInput.value;
+        const checkOut = checkOutInput.value;
+
+        if (!checkIn || !checkOut) {
+            alert('Please select both check-in and check-out dates first.');
+            return;
+        }
+
+        if (new Date(checkOut) <= new Date(checkIn)) {
+            alert('Check-out date must be after check-in date.');
+            return;
+        }
+
+        const url = `{{ path('booking_available_rooms') }}?checkIn=${encodeURIComponent(checkIn)}&checkOut=${encodeURIComponent(checkOut)}`;
+
+        try {
+            lookRoomsBtn.disabled = true;
+            lookRoomsBtn.textContent = 'Searching...';
+
+            const response = await fetch(url, { 
+                headers: { 
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                } 
+            });
+            
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            
+            const data = await response.json();
+            
+
+            roomsDropdown.innerHTML = '<option value="">Select a room...</option>';
+            roomPrices = {};
+
+            if (!data.rooms || data.rooms.length === 0) {
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = 'No rooms available for selected dates';
+                roomsDropdown.appendChild(option);
+            } else {
+                data.rooms.forEach(function(room) {
+                    const option = document.createElement('option');
+                    option.value = room.id;
+                    option.textContent = room.label;
+                    roomsDropdown.appendChild(option);
+                    
+                
+                    const priceMatch = room.label.match(/₱\s*(\d+(?:\.\d{2})?)/);
+                    if (priceMatch) {
+                        roomPrices[room.id] = parseFloat(priceMatch[1]);
+                    }
+                });
+            }
+            
+      
+            roomsDropdown.disabled = false;
+            
+        } catch (err) {
+            console.error('Error:', err);
+            alert('Error fetching available rooms.');
+        } finally {
+            lookRoomsBtn.disabled = false;
+            lookRoomsBtn.textContent = 'Look for Rooms';
+        }
+    });
+
+
+    roomsDropdown.addEventListener('change', function() {
+        roomIdInput.value = this.value;
+        
+
+        if (this.value && roomPrices[this.value]) {
+            selectedRoomPrice = roomPrices[this.value];
+        } else {
+            selectedRoomPrice = 0;
+        }
+        
+        calculateTotal();
+        
+     
+        if (this.value) {
+            this.style.borderColor = '#10B981';
+            this.style.backgroundColor = '#F0F9FF';
+        } else {
+            this.style.borderColor = '';
+            this.style.backgroundColor = '';
+        }
+    });
+
+  
+    form.addEventListener('submit', function(e) {
+        if (!roomIdInput.value) {
+            e.preventDefault();
+            alert('Please select a room from the dropdown.');
+            roomsDropdown.focus();
+        }
+    });
+
+    
+    initializeServicePrices();
+    calculateTotal();
+});
+</script>
+
+<style>
+#roomsDropdown:disabled {
+    background-color: #f9fafb;
+    color: #6b7280;
+    cursor: not-allowed;
+}
+
+#roomsDropdown option {
+    padding: 8px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+
+a.bg-gray-500 {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+
+.service-checkbox {
+    margin-right: 8px;
+}
+</style>
+{% endblock %}
