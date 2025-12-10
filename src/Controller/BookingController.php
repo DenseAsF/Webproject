@@ -12,6 +12,7 @@ use App\Repository\UserRepository;
 use App\Repository\RoomRepository;
 use App\Repository\ServiceRepository;
 use App\Repository\BookingRepository;
+use App\Service\ActivityLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -75,7 +76,7 @@ class BookingController extends AbstractController
     }
 
     #[Route('/new', name: 'booking_new', methods: ['GET','POST'])]
-    public function new(Request $request, EntityManagerInterface $em, RoomRepository $roomRepo, UserRepository $userRepo, ServiceRepository $serviceRepo): Response
+    public function new(Request $request, EntityManagerInterface $em, RoomRepository $roomRepo, UserRepository $userRepo, ServiceRepository $serviceRepo, ActivityLogger $activityLogger): Response
     {
         $booking = new Booking();
         $form = $this->createForm(BookingType::class, $booking);
@@ -133,6 +134,14 @@ class BookingController extends AbstractController
 
                 $em->persist($booking);
                 $em->flush();
+
+                // Log booking creation (staff creates a booking)
+                $activityLogger->log(
+                    action: 'BOOKING_CREATE',
+                    entityType: 'Booking',
+                    entityId: $booking->getId(),
+                    description: 'Booking created for user ' . $user->getUsername() . ' (Booking ID ' . $booking->getId() . ')'
+                );
 
                 return $this->redirectToRoute('booking_index');
 
@@ -428,7 +437,7 @@ class BookingController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'booking_edit', methods: ['GET','POST'])]
-    public function edit(Request $request, Booking $booking, EntityManagerInterface $em, RoomRepository $roomRepo, UserRepository $userRepo, ServiceRepository $serviceRepo): Response
+    public function edit(Request $request, Booking $booking, EntityManagerInterface $em, RoomRepository $roomRepo, UserRepository $userRepo, ServiceRepository $serviceRepo, ActivityLogger $activityLogger): Response
     {
         $originalRoom = $booking->getRoom();
         
@@ -495,6 +504,15 @@ class BookingController extends AbstractController
                 $booking->setTotalPrice($total + $selectedServicesPrice);
 
                 $em->flush();
+
+                // Log booking update (staff or admin updates a booking)
+                $activityLogger->log(
+                    action: 'BOOKING_UPDATE',
+                    entityType: 'Booking',
+                    entityId: $booking->getId(),
+                    description: 'Booking updated (ID ' . $booking->getId() . ')'
+                );
+
                 return $this->redirectToRoute('booking_show', ['id' => $booking->getId()]);
 
             } catch (\Exception $e) {
@@ -514,11 +532,20 @@ class BookingController extends AbstractController
     }
 
     #[Route('/{id}/delete', name: 'booking_delete', methods: ['POST'])]
-    public function delete(Request $request, Booking $booking, EntityManagerInterface $em): Response
+    public function delete(Request $request, Booking $booking, EntityManagerInterface $em, ActivityLogger $activityLogger): Response
     {
         if ($this->isCsrfTokenValid('delete'.$booking->getId(), $request->request->get('_token'))) {
+            $bookingId = $booking->getId();
             $em->remove($booking);
             $em->flush();
+
+            // Log booking deletion (staff deletes a booking)
+            $activityLogger->log(
+                action: 'BOOKING_DELETE',
+                entityType: 'Booking',
+                entityId: $bookingId,
+                description: 'Booking deleted (ID ' . $bookingId . ')'
+            );
         }
 
         return $this->redirectToRoute('booking_index');

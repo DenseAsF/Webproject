@@ -46,6 +46,7 @@ security:
         - { path: ^/user/.*/disable, roles: ['ROLE_ADMIN'] }
         - { path: ^/history, roles: ['ROLE_ADMIN'] }
         - { path: ^/user$, roles: ['ROLE_ADMIN'] }
+        - { path: ^/activity-log, roles: ['ROLE_ADMIN'] }
       
        
         

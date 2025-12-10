@@ -71,6 +71,12 @@
            {% if app.request.attributes.get('_route') == 'booking_history' %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">
             History
         </a>
+
+        <a href="{{ path('activity_log_index') }}"
+           class="px-4 py-2 rounded hover:bg-[rgb(242,182,34)]
+           {% if app.request.attributes.get('_route') == 'activity_log_index' %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">
+            Activity Logs
+        </a>
 {% endif %}
 
         <a href="{{ path('user_profile') }}"

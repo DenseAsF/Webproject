@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Entity\Points;
 use App\Form\UserType;
 use App\Repository\UserRepository;
+use App\Service\ActivityLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,7 +54,8 @@ public function new(
     Request $request,
     EntityManagerInterface $em,
     UserPasswordHasherInterface $hasher,
-    UserRepository $userRepo
+    UserRepository $userRepo,
+    ActivityLogger $activityLogger
 ): Response {
     $user = new User();
     $user->setAccountNumber($this->generateUniqueAccountNumber($userRepo));
@@ -182,6 +184,14 @@ public function new(
                 $em->persist($user);
                 $em->persist($points);
                 $em->flush();
+
+                // Log admin creates a user
+                $activityLogger->log(
+                    action: 'USER_CREATE',
+                    entityType: 'User',
+                    entityId: $user->getId(),
+                    description: 'Admin created user ' . $user->getUsername()
+                );
 
                 $this->addFlash('success', 'User created successfully!');
                 return $this->redirectToRoute('user_new');
@@ -388,11 +398,21 @@ public function customerIndex(UserRepository $repo, Request $request): Response
 }
 
     #[Route('/{id}/delete', name: 'user_delete', requirements: ['id' => '\\d+'])]
-    public function delete(Request $request, User $user, EntityManagerInterface $em): Response
+    public function delete(Request $request, User $user, EntityManagerInterface $em, ActivityLogger $activityLogger): Response
     {
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
+            $deletedUserId = $user->getId();
+            $deletedUsername = $user->getUsername();
             $em->remove($user);
             $em->flush();
+
+            // Log admin deletes a user
+            $activityLogger->log(
+                action: 'USER_DELETE',
+                entityType: 'User',
+                entityId: $deletedUserId,
+                description: 'Admin deleted user ' . $deletedUsername
+            );
         }
         
         return $this->redirectToRoute('user_index');
