@@ -1,31 +1,138 @@
 {% extends 'adminbase.html.twig' %}
 
-{% block title %}Create User{% endblock %}
+{% block title %}Create New User{% endblock %}
 
 {% block body %}
+<div class="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg helvetica-condensed">
 
-<h2>Create New User</h2>
+    <h2 class="text-2xl font-bold mb-6">Create New User</h2>
 
-{% for msg in app.flashes('error') %}
-    <div style="color:red;">{{ msg }}</div>
-{% endfor %}
+    {{ form_start(form, {
+        attr: {'class': 'space-y-6', 'data-turbo':'false'},
+        novalidate: 'novalidate'
+    }) }}
 
-{% for msg in app.flashes('success') %}
-    <div style="color:green;">{{ msg }}</div>
-{% endfor %}
 
-<p>Account Number: <b>{{ accountNumber }}</b></p>
+    {# USERNAME #}
+    <div>
+        {{ form_label(form.username, 'Username', {'label_attr': {'class':'block text-sm font-medium text-gray-700'}}) }}
+        {{ form_widget(form.username, {
+            attr: {
+                class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ' ~
+                       (form.username.vars.errors|length ? 'border-red-500' : 'border-gray-300')
+            }
+        }) }}
 
-{{ form_start(form) }}
-    {{ form_row(form.username) }}
-    {{ form_row(form.name) }}
-    {{ form_row(form.email) }}
-    {{ form_row(form.phone) }}
-    {{ form_row(form.age) }}
-    {{ form_row(form.roles) }}
-    {{ form_row(form.plainPassword) }}
+        {% for error in form.username.vars.errors %}
+            <p class="text-sm text-red-600 mt-1">{{ error.message }}</p>
+        {% endfor %}
+    </div>
 
-    <button class="btn btn-primary">Create</button>
-{{ form_end(form) }}
 
+    {# NAME #}
+    <div>
+        {{ form_label(form.name, 'Full Name', {'label_attr': {'class':'block text-sm font-medium text-gray-700'}}) }}
+        {{ form_widget(form.name, {
+            attr: {
+                class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ' ~
+                       (form.name.vars.errors|length ? 'border-red-500' : 'border-gray-300')
+            }
+        }) }}
+
+        {% for error in form.name.vars.errors %}
+            <p class="text-sm text-red-600 mt-1">{{ error.message }}</p>
+        {% endfor %}
+    </div>
+
+
+    {# EMAIL #}
+    <div>
+        {{ form_label(form.email, 'Email', {'label_attr': {'class':'block text-sm font-medium text-gray-700'}}) }}
+        {{ form_widget(form.email, {
+            attr: {
+                class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ' ~
+                       (form.email.vars.errors|length ? 'border-red-500' : 'border-gray-300')
+            }
+        }) }}
+
+        {% for error in form.email.vars.errors %}
+            <p class="text-sm text-red-600 mt-1">{{ error.message }}</p>
+        {% endfor %}
+    </div>
+
+
+    {# PHONE #}
+    <div>
+        {{ form_label(form.phone, 'Phone', {'label_attr': {'class':'block text-sm font-medium text-gray-700'}}) }}
+        {{ form_widget(form.phone, {
+            attr: {
+                class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ' ~
+                       (form.phone.vars.errors|length ? 'border-red-500' : 'border-gray-300')
+            }
+        }) }}
+
+        {% for error in form.phone.vars.errors %}
+            <p class="text-sm text-red-600 mt-1">{{ error.message }}</p>
+        {% endfor %}
+    </div>
+
+
+    {# AGE #}
+    <div>
+        {{ form_label(form.age, 'Age', {'label_attr': {'class':'block text-sm font-medium text-gray-700'}}) }}
+        {{ form_widget(form.age, {
+            attr: {
+                class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ' ~
+                       (form.age.vars.errors|length ? 'border-red-500' : 'border-gray-300')
+            }
+        }) }}
+
+        {% for error in form.age.vars.errors %}
+            <p class="text-sm text-red-600 mt-1">{{ error.message }}</p>
+        {% endfor %}
+    </div>
+
+
+    {# ROLES #}
+    <div>
+        {{ form_label(form.roles, 'Roles', {'label_attr': {'class':'block text-sm font-medium text-gray-700'}}) }}
+        {{ form_widget(form.roles, {
+            attr: {
+                class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ' ~
+                       (form.roles.vars.errors|length ? 'border-red-500' : 'border-gray-300')
+            }
+        }) }}
+        {% for error in form.roles.vars.errors %}
+            <p class="text-sm text-red-600 mt-1">{{ error.message }}</p>
+        {% endfor %}
+    </div>
+
+
+    {# PASSWORD #}
+    <div>
+        {{ form_label(form.plainPassword, 'Password', {'label_attr': {'class':'block text-sm font-medium text-gray-700'}}) }}
+        {{ form_widget(form.plainPassword, {
+            attr: {
+                class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ' ~
+                       (form.plainPassword.vars.errors|length ? 'border-red-500' : 'border-gray-300')
+            }
+        }) }}
+        {% for error in form.plainPassword.vars.errors %}
+            <p class="text-sm text-red-600 mt-1">{{ error.message }}</p>
+        {% endfor %}
+    </div>
+
+
+    {# SUBMIT BUTTON #}
+    <div>
+        <button type="submit"
+                class="w-full bg-[rgb(29,53,153)] text-white py-2 px-4 rounded-md hover:bg-[rgb(242,182,34)] transition-colors">
+            Create User
+        </button>
+    </div>
+
+
+    {{ form_end(form) }}
+
+</div>
 {% endblock %}

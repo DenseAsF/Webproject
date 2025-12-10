@@ -7,8 +7,8 @@ use App\Form\BookingType;
 use App\Entity\Booking;
 use App\Entity\BookingHistory;
 use App\Entity\BookingService;
-use App\Entity\User; // Changed from Customer
-use App\Repository\UserRepository; // Changed from CustomerRepository
+use App\Entity\User; 
+use App\Repository\UserRepository;
 use App\Repository\RoomRepository;
 use App\Repository\ServiceRepository;
 use App\Repository\BookingRepository;
@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+
 #[Route('/booking')]
 class BookingController extends AbstractController
 {
@@ -26,7 +27,7 @@ class BookingController extends AbstractController
     {
         $status = $request->query->get('status');
         $search = $request->query->get('search');
-        $userId = $request->query->get('customer'); // This parameter name might need updating
+        $userId = $request->query->get('customer'); 
         $startDate = $request->query->get('startDate');
         $endDate = $request->query->get('endDate');
 
@@ -45,7 +46,7 @@ class BookingController extends AbstractController
         }
 
         if ($userId) {
-            $qb->andWhere('b.user = :userId') // Changed from b.customer
+            $qb->andWhere('b.user = :userId') 
                ->setParameter('userId', $userId);
         }
 

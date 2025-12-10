@@ -1,42 +1,85 @@
-{% extends 'base.html.twig' %}
+{% extends 'adminbase.html.twig' %}
 
-{% block title %}User{% endblock %}
+{% block title %}User Details{% endblock %}
 
 {% block body %}
-    <h1>User</h1>
+<div class="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg helvetica-condensed">
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ user.id }}</td>
-            </tr>
-            <tr>
-                <th>Username</th>
-                <td>{{ user.username }}</td>
-            </tr>
-            <tr>
-                <th>Roles</th>
-                <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
-            </tr>
-            <tr>
-                <th>Password</th>
-                <td>{{ user.password }}</td>
-            </tr>
-            <tr>
-                <th>Email</th>
-                <td>{{ user.email }}</td>
-            </tr>
-            <tr>
-                <th>Phone</th>
-                <td>{{ user.phone }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <h2 class="text-2xl font-bold mb-6">User Details</h2>
 
-    <a href="{{ path('app_user_index') }}">back to list</a>
+    <div class="space-y-4">
 
-    <a href="{{ path('app_user_edit', {'id': user.id}) }}">edit</a>
+        <div>
+            <p class="text-sm text-gray-500">ID</p>
+            <p class="text-lg font-medium">{{ user.id }}</p>
+        </div>
 
-    {{ include('user/_delete_form.html.twig') }}
+        <div>
+            <p class="text-sm text-gray-500">Username</p>
+            <p class="text-lg font-medium">{{ user.username }}</p>
+        </div>
+
+        <div>
+            <p class="text-sm text-gray-500">Roles</p>
+
+            <div class="flex gap-2 mt-1">
+                {% for role in user.roles %}
+                    <span class="px-2 py-1 text-xs rounded bg-blue-100 text-blue-700">
+                        {{ role }}
+                    </span>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div>
+            <p class="text-sm text-gray-500">Email</p>
+            <p class="text-lg">{{ user.email }}</p>
+        </div>
+
+        <div>
+            <p class="text-sm text-gray-500">Phone</p>
+            <p class="text-lg">
+                {% if user.phone|length == 11 %}
+                    {{ user.phone|slice(0,4) ~ '-' ~ user.phone|slice(4,3) ~ '-' ~ user.phone|slice(7,4) }}
+                {% else %}
+                    {{ user.phone }}
+                {% endif %}
+            </p>
+        </div>
+
+        <div>
+            <p class="text-sm text-gray-500">Age</p>
+            <p class="text-lg">{{ user.age }}</p>
+        </div>
+
+        <div>
+            <p class="text-sm text-gray-500">Account Number</p>
+            <p class="text-lg">{{ user.accountNumber }}</p>
+        </div>
+
+        <div>
+            <p class="text-sm text-gray-500">Created At</p>
+            <p class="text-lg">{{ user.createdAt|date('Y-m-d H:i') }}</p>
+        </div>
+
+    </div>
+
+    <div class="mt-6 flex gap-3">
+
+        <a href="{{ path('user_index') }}"
+           class="flex-1 text-center bg-gray-500 hover:bg-gray-600 text-white py-2 rounded-md">
+            Back
+        </a>
+
+        <a href="{{ path('user_edit', {'id': user.id}) }}"
+           class="flex-1 text-center bg-green-600 hover:bg-green-700 text-white py-2 rounded-md">
+            Edit
+        </a>
+    </div>
+
+    <div class="mt-4">
+        {{ include('user/_delete_form.html.twig') }}
+    </div>
+
+</div>
 {% endblock %}

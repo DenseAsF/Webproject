@@ -6,14 +6,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use App\Repository\UserRepository;
-use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: 'user')]
-#[ORM\UniqueConstraint(columns: ['username'])]
-#[ORM\UniqueConstraint(columns: ['email'])]
-#[ORM\UniqueConstraint(columns: ['account_number'])]
-#[ORM\HasLifecycleCallbacks]
+#[ORM\Table(name: '`user`')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -22,8 +18,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    #[Assert\NotBlank(message: 'Username is required.')]
-    #[Assert\Length(min: 3, max: 180)]
     private string $username;
 
     #[ORM\Column(type: 'json')]
@@ -33,22 +27,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private string $password;
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Assert\NotBlank(message: 'Email is required.')]
-    #[Assert\Email(message: 'Please enter a valid email address.')]
     private string $email;
 
-    #[ORM\Column(length: 20)]
-    #[Assert\NotBlank(message: 'Phone number is required.')]
-    #[Assert\Regex(pattern: '/^09\d{9}$/', message: 'Phone number must start with 09 and contain exactly 11 digits.')]
+    #[ORM\Column(length: 11)]
     private string $phone;
 
     #[ORM\Column(length: 100)]
-    #[Assert\NotBlank(message: 'Name is required.')]
     private string $name;
 
     #[ORM\Column(type: 'integer')]
-    #[Assert\NotBlank(message: 'Age is required.')]
-    #[Assert\Range(min: 1, max: 120)]
     private int $age;
 
     #[ORM\Column(name: 'account_number', length: 50, unique: true)]

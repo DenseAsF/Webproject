@@ -1,0 +1,178 @@
+{% extends 'adminbase.html.twig' %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block body %}
+
+<div class="max-w-xl mx-auto mt-10">
+
+    <div class="bg-white shadow rounded-xl p-6">
+
+        <h2 class="text-2xl font-bold mb-5">Edit Your Profile</h2>
+
+        {# SUCCESS FLASH #}
+        {% for msg in app.flashes('success') %}
+            <div class="mb-3 p-3 rounded bg-green-100 border border-green-300 text-green-700 text-sm">
+                {{ msg }}
+            </div>
+        {% endfor %}
+
+        {# ERROR FLASH #}
+        {% for msg in app.flashes('error') %}
+            <div class="mb-3 p-3 rounded bg-red-100 border border-red-300 text-red-700 text-sm">
+                {{ msg }}
+            </div>
+        {% endfor %}
+
+        {{ form_start(form, {
+            attr: {
+                novalidate: 'novalidate',
+                'data-turbo': 'false'
+            }
+        }) }}
+
+        <div class="space-y-5">
+
+            {# ---------- USERNAME ---------- #}
+            <div>
+                {{ form_label(form.username) }}
+
+                {{ form_widget(form.username, {
+                    attr: {
+                        class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm '
+                        ~ (form.username.vars.errors|length > 0
+                            ? 'border-red-500'
+                            : 'border-gray-300'
+                        )
+                    }
+                }) }}
+
+                {% if form.username.vars.errors|length > 0 %}
+                    <ul class="mt-1 text-sm text-red-600 space-y-1">
+                        {% for error in form.username.vars.errors %}
+                            <li>{{ error.message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            {# ---------- NAME ---------- #}
+            <div>
+                {{ form_label(form.name) }}
+                {{ form_widget(form.name, {
+                    attr: {
+                        class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm '
+                        ~ (form.name.vars.errors|length > 0
+                            ? 'border-red-500'
+                            : 'border-gray-300'
+                        )
+                    }
+                }) }}
+                {% if form.name.vars.errors|length > 0 %}
+                    <ul class="mt-1 text-sm text-red-600 space-y-1">
+                        {% for error in form.name.vars.errors %}
+                            <li>{{ error.message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            {# ---------- EMAIL ---------- #}
+            <div>
+                {{ form_label(form.email) }}
+                {{ form_widget(form.email, {
+                    attr: {
+                        class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm '
+                        ~ (form.email.vars.errors|length > 0
+                            ? 'border-red-500'
+                            : 'border-gray-300'
+                        )
+                    }
+                }) }}
+                {% if form.email.vars.errors|length > 0 %}
+                    <ul class="mt-1 text-sm text-red-600 space-y-1">
+                        {% for error in form.email.vars.errors %}
+                            <li>{{ error.message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            {# ---------- PHONE ---------- #}
+            <div>
+                {{ form_label(form.phone) }}
+                {{ form_widget(form.phone, {
+                    attr: {
+                        class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm '
+                        ~ (form.phone.vars.errors|length > 0
+                            ? 'border-red-500'
+                            : 'border-gray-300'
+                        )
+                    }
+                }) }}
+                {% if form.phone.vars.errors|length > 0 %}
+                    <ul class="mt-1 text-sm text-red-600 space-y-1">
+                        {% for error in form.phone.vars.errors %}
+                            <li>{{ error.message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            {# ---------- AGE ---------- #}
+            <div>
+                {{ form_label(form.age) }}
+                {{ form_widget(form.age, {
+                    attr: {
+                        class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm '
+                        ~ (form.age.vars.errors|length > 0
+                            ? 'border-red-500'
+                            : 'border-gray-300'
+                        )
+                    }
+                }) }}
+                {% if form.age.vars.errors|length > 0 %}
+                    <ul class="mt-1 text-sm text-red-600 space-y-1">
+                        {% for error in form.age.vars.errors %}
+                            <li>{{ error.message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            {# ---------- PASSWORD ---------- #}
+            <div>
+                {{ form_label(form.plainPassword, 'New Password (leave blank to keep old)') }}
+                {{ form_widget(form.plainPassword, {
+                    attr: {
+                        class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm '
+                        ~ (form.plainPassword.vars.errors|length > 0
+                            ? 'border-red-500'
+                            : 'border-gray-300'
+                        )
+                    }
+                }) }}
+                {% if form.plainPassword.vars.errors|length > 0 %}
+                    <ul class="mt-1 text-sm text-red-600 space-y-1">
+                        {% for error in form.plainPassword.vars.errors %}
+                            <li>{{ error.message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+        </div>
+
+
+        <button
+            class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded shadow"
+        >
+            Save Changes
+        </button>
+
+        {{ form_end(form) }}
+
+    </div>
+</div>
+
+{% endblock %}

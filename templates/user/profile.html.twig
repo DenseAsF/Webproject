@@ -1,0 +1,38 @@
+{% extends 'adminbase.html.twig' %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block body %}
+<div class="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+
+    <h1 class="text-2xl font-bold mb-6">My Profile</h1>
+
+    <div class="mb-3">
+        <strong>Username:</strong> {{ user.username }}
+    </div>
+
+    <div class="mb-3">
+        <strong>Name:</strong> {{ user.name }}
+    </div>
+
+    <div class="mb-3">
+        <strong>Email:</strong> {{ user.email }}
+    </div>
+
+    <div class="mb-3">
+        <strong>Phone:</strong> {{ user.phone }}
+    </div>
+
+    <div class="mb-3">
+        <strong>Account Number:</strong> {{ user.accountNumber }}
+    </div>
+
+    <div class="mb-3">
+        <strong>Roles:</strong>
+        {{ user.roles|join(', ') }}
+    </div>
+
+    <a href="{{ path('user_profile_edit') }}" class="text-blue-600">Edit Profile</a>
+
+</div>
+{% endblock %}

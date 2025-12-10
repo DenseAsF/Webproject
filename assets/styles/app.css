@@ -30,3 +30,10 @@ body {
 .testcolor{
  color: rgb(67, 85, 145);
 }
+
+.form-error-message, .invalid-feedback {
+  color: red;
+  display: block;
+  font-size: 0.875em; /* Smaller text */
+  margin-top: 0.25em; /* Some space above */
+}

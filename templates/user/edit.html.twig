@@ -1,13 +1,184 @@
-{% extends 'base.html.twig' %}
+{% extends 'adminbase.html.twig' %}
 
 {% block title %}Edit User{% endblock %}
 
 {% block body %}
-    <h1>Edit User</h1>
+<div class="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg helvetica-condensed">
 
-    {{ include('user/_form.html.twig', {'button_label': 'Update'}) }}
+    <h2 class="text-2xl font-bold mb-6">Edit User</h2>
 
-    <a href="{{ path('app_user_index') }}">back to list</a>
+    {{ form_start(form, { attr: { novalidate: 'novalidate', 'data-turbo': 'false' } }) }}
 
-    {{ include('user/_delete_form.html.twig') }}
+    <div class="space-y-6">
+
+        {# ---------- USERNAME ---------- #}
+        <div>
+            {{ form_label(form.username, 'Username', { label_attr: { class: 'block text-sm font-medium text-gray-700' } }) }}
+
+            {{ form_widget(form.username, {
+                attr: {
+                    class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm '
+                    ~ (form.username.vars.errors|length > 0 ? 'border-red-500' : 'border-gray-300')
+                    ~ ' focus:ring-blue-500 focus:border-blue-500'
+                }
+            }) }}
+
+            {% if form.username.vars.errors|length > 0 %}
+                <ul class="mt-1 text-sm text-red-600 space-y-1">
+                    {% for error in form.username.vars.errors %}
+                        <li>{{ error.message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+
+        {# ---------- FULL NAME ---------- #}
+        <div>
+            {{ form_label(form.name, 'Full Name', { label_attr: { class: 'block text-sm font-medium text-gray-700' } }) }}
+
+            {{ form_widget(form.name, {
+                attr: {
+                    class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm '
+                    ~ (form.name.vars.errors|length > 0 ? 'border-red-500' : 'border-gray-300')
+                    ~ ' focus:ring-blue-500 focus:border-blue-500'
+                }
+            }) }}
+
+            {% if form.name.vars.errors|length > 0 %}
+                <ul class="mt-1 text-sm text-red-600 space-y-1">
+                    {% for error in form.name.vars.errors %}
+                        <li>{{ error.message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+
+        {# ---------- EMAIL ---------- #}
+        <div>
+            {{ form_label(form.email, 'Email Address', { label_attr: { class: 'block text-sm font-medium text-gray-700' } }) }}
+
+            {{ form_widget(form.email, {
+                attr: {
+                    class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm '
+                    ~ (form.email.vars.errors|length > 0 ? 'border-red-500' : 'border-gray-300')
+                    ~ ' focus:ring-blue-500 focus:border-blue-500'
+                }
+            }) }}
+
+            {% if form.email.vars.errors|length > 0 %}
+                <ul class="mt-1 text-sm text-red-600 space-y-1">
+                    {% for error in form.email.vars.errors %}
+                        <li>{{ error.message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+
+        {# ---------- PHONE ---------- #}
+        <div>
+            {{ form_label(form.phone, 'Phone Number', { label_attr: { class: 'block text-sm font-medium text-gray-700' } }) }}
+
+            {{ form_widget(form.phone, {
+                attr: {
+                    class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm '
+                    ~ (form.phone.vars.errors|length > 0 ? 'border-red-500' : 'border-gray-300')
+                    ~ ' focus:ring-blue-500 focus:border-blue-500'
+                }
+            }) }}
+
+            {% if form.phone.vars.errors|length > 0 %}
+                <ul class="mt-1 text-sm text-red-600 space-y-1">
+                    {% for error in form.phone.vars.errors %}
+                        <li>{{ error.message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+
+        {# ---------- AGE ---------- #}
+        <div>
+            {{ form_label(form.age, 'Age', { label_attr: { class: 'block text-sm font-medium text-gray-700' } }) }}
+
+            {{ form_widget(form.age, {
+                attr: {
+                    class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm '
+                    ~ (form.age.vars.errors|length > 0 ? 'border-red-500' : 'border-gray-300')
+                    ~ ' focus:ring-blue-500 focus:border-blue-500'
+                }
+            }) }}
+
+            {% if form.age.vars.errors|length > 0 %}
+                <ul class="mt-1 text-sm text-red-600 space-y-1">
+                    {% for error in form.age.vars.errors %}
+                        <li>{{ error.message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+
+        {# ---------- ROLES ---------- #}
+        <div>
+            {{ form_label(form.roles, 'Roles', { label_attr: { class: 'block text-sm font-medium text-gray-700' } }) }}
+
+            {{ form_widget(form.roles, {
+                attr: {
+                    class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm '
+                    ~ (form.roles.vars.errors|length > 0 ? 'border-red-500' : 'border-gray-300')
+                    ~ ' focus:ring-blue-500 focus:border-blue-500'
+                }
+            }) }}
+
+            {% if form.roles.vars.errors|length > 0 %}
+                <ul class="mt-1 text-sm text-red-600 space-y-1">
+                    {% for error in form.roles.vars.errors %}
+                        <li>{{ error.message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+
+        {# ---------- PASSWORD ---------- #}
+        <div>
+            {{ form_label(form.plainPassword, 'Password (leave blank to keep current)', { label_attr: { class: 'block text-sm font-medium text-gray-700' } }) }}
+
+            {{ form_widget(form.plainPassword, {
+                attr: {
+                    placeholder: 'Leave blank to keep current password',
+                    class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm '
+                    ~ (form.plainPassword.vars.errors|length > 0 ? 'border-red-500' : 'border-gray-300')
+                    ~ ' focus:ring-blue-500 focus:border-blue-500'
+                }
+            }) }}
+
+            {% if form.plainPassword.vars.errors|length > 0 %}
+                <ul class="mt-1 text-sm text-red-600 space-y-1">
+                    {% for error in form.plainPassword.vars.errors %}
+                        <li>{{ error.message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+    </div>
+
+    {# SUBMIT BUTTON #}
+    <button
+        class="w-full mt-6 bg-[rgb(29,53,153)] text-white py-2 rounded-md hover:bg-[rgb(242,182,34)] transition-colors">
+        Update User
+    </button>
+
+    {{ form_end(form) }}
+
+    {# DELETE BUTTON #}
+    <div class="mt-6">
+        {{ include('user/_delete_form.html.twig') }}
+    </div>
+
+</div>
 {% endblock %}

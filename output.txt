@@ -1,0 +1,190 @@
+The `new.html.twig` template is now configured to display validation error messages for individual fields and global form errors. The styling for the error messages is handled by the `.error-container` class and its nested `li` elements in the provided `<style>` block.
+
+For these error messages to appear as you described (e.g., "password not on the minimum or is empty", "every field that is empty will show an error", "username and email it must have an error like 'this already exist'"), you need to ensure that the appropriate validation constraints are defined in your backend code, specifically in:
+
+1.  **`src/Entity/User.php`**: For field-level validation and unique constraints.
+2.  **`src/Form/UserType.php`**: For form-specific validation, especially for fields not directly mapped to the entity (like `plainPassword`).
+
+Here are examples of how these constraints should be set up:
+
+**`src/Entity/User.php` (Example for unique fields and NotBlank constraints)**
+
+```php
+<?php
+
+namespace App\Entity;
+
+use App\Repository\UserRepository;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+
+/**
+ * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @ORM\Table(name="`user`")
+ * @UniqueEntity(fields={"username"}, message="This username is already taken.")
+ * @UniqueEntity(fields={"email"}, message="This email is already registered.")
+ */
+class User implements UserInterface, PasswordAuthenticatedUserInterface
+{
+    // ... existing properties and methods ...
+
+    /**
+     * @ORM\Column(type="string", length=180, unique=true)
+     * @Assert\NotBlank(message="Username cannot be empty.")
+     * @Assert\Length(min=3, max=180, minMessage="Username must be at least {{ limit }} characters long.")
+     */
+    private ?string $username = null;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="Name cannot be empty.")
+     */
+    private ?string $name = null;
+
+    /**
+     * @ORM\Column(type="string", length=255, unique=true)
+     * @Assert\NotBlank(message="Email cannot be empty.")
+     * @Assert\Email(message="The email '{{ value }}' is not a valid email.")
+     */
+    private ?string $email = null;
+
+    /**
+     * @ORM\Column(type="string", length=11)
+     * @Assert\NotBlank(message="Phone number cannot be empty.")
+     * @Assert\Regex(pattern="/^09[0-9]{9}$/", message="Phone number must start with 09 and be 11 digits long.")
+     */
+    private ?string $phone = null;
+
+    /**
+     * @ORM\Column(type="integer")
+     * @Assert\NotBlank(message="Age cannot be empty.")
+     * @Assert\Range(min=18, max=100, minMessage="You must be at least {{ limit }} years old.", maxMessage="You cannot be older than {{ limit }} years.")
+     */
+    private ?int $age = null;
+
+    // ... other properties and methods ...
+}
+```
+
+**`src/Form/UserType.php` (Example for plainPassword validation)**
+
+```php
+<?php
+
+namespace App\Form;
+
+use App\Entity\User;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotNull; // Use NotNull for number fields if they can't be empty
+
+class UserType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            ->add('username', TextType::class, [
+                'attr' => ['class' => 'form-input'],
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Please enter a username',
+                    ]),
+                    new Length([
+                        'min' => 3,
+                        'minMessage' => 'Your username should be at least {{ limit }} characters',
+                        'max' => 180,
+                    ]),
+                ],
+            ])
+            ->add('name', TextType::class, [
+                'attr' => ['class' => 'form-input'],
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Please enter your name',
+                    ]),
+                ],
+            ])
+            ->add('email', EmailType::class, [
+                'attr' => ['class' => 'form-input'],
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Please enter an email',
+                    ]),
+                ],
+            ])
+            ->add('phone', TextType::class, [
+                'attr' => ['class' => 'form-input', 'maxlength' => '11'],
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Please enter a phone number',
+                    ]),
+                    new Length([
+                        'min' => 11,
+                        'max' => 11,
+                        'exactMessage' => 'Your phone number must be exactly {{ limit }} digits long.',
+                    ]),
+                ],
+            ])
+            ->add('age', NumberType::class, [
+                'attr' => ['class' => 'form-input'],
+                'constraints' => [
+                    new NotNull([
+                        'message' => 'Please enter your age',
+                    ]),
+                    new Length([
+                        'min' => 1,
+                        'minMessage' => 'Your age must be at least {{ limit }} digit.',
+                    ]),
+                ],
+            ])
+            ->add('roles', ChoiceType::class, [
+                'choices' => [
+                    'User' => 'ROLE_USER',
+                    'Admin' => 'ROLE_ADMIN',
+                ],
+                'multiple' => true,
+                'expanded' => true, // Render as checkboxes or radio buttons
+                'attr' => ['class' => 'form-checkbox-group'],
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Please select at least one role',
+                    ]),
+                ],
+            ])
+            ->add('plainPassword', PasswordType::class, [
+                'mapped' => false,
+                'attr' => ['autocomplete' => 'new-password', 'class' => 'form-input'],
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Please enter a password',
+                    ]),
+                    new Length([
+                        'min' => 6,
+                        'minMessage' => 'Your password should be at least {{ limit }} characters',
+                        'max' => 4096, // Max length allowed by Symfony for security reasons
+                    ]),
+                ],
+            ]);
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => User::class,
+        ]);
+    }
+}
+```
+
+By ensuring these constraints are correctly implemented in your Symfony application, the `new.html.twig` template will automatically display the corresponding validation error messages to the user.

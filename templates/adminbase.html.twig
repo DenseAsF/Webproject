@@ -44,7 +44,7 @@
 
         <a href="{{ path('booking_index') }}"
            class="px-4 py-2 rounded hover:bg-[rgb(242,182,34)] 
-           {% if app.request.attributes.get('_route') starts with 'booking' %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">
+           {% if app.request.attributes.get('_route') == 'booking_index' %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">
             Bookings
         </a>
   {% if is_granted('ROLE_ADMIN') %}
@@ -54,10 +54,16 @@
             Rooms
         </a>
 
-         <a href="{{ path('user_index') }}"
-           class="px-4 py-2 rounded hover:bg-[rgb(242,182,34)]
-           {% if app.request.attributes.get('_route') == 'app_user_index' %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">
+                <a href="{{ path('user_index') }}"
+        class="px-4 py-2 rounded hover:bg-[rgb(242,182,34)]
+        {% if app.request.attributes.get('_route') in ['user_index', 'users_new'] %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">
             Users
+        </a>
+
+        <a href="{{ path('customer_index') }}"
+           class="px-4 py-2 rounded hover:bg-[rgb(242,182,34)]
+           {% if app.request.attributes.get('_route') == 'customer_index' %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">
+            Customers
         </a>
 
         <a href="{{ path('booking_history') }}"
@@ -66,6 +72,13 @@
             History
         </a>
 {% endif %}
+
+        <a href="{{ path('user_profile') }}"
+           class="px-4 py-2 rounded hover:bg-[rgb(242,182,34)]
+           {% if app.request.attributes.get('_route') == 'user_profile' %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">
+            My Profile
+        </a>
+
 
    <a href="{{ path('app_logout') }}"
    class="inline-block px-4 py-2 rounded hover:bg-red-600">
