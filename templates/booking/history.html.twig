@@ -88,11 +88,10 @@
                         <td class="px-6 py-4 whitespace-nowrap">{{ booking.checkInDate|date('Y-m-d') }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">{{ booking.checkOutDate|date('Y-m-d') }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">₱{{ booking.totalPrice|number_format(2) }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">
+                        <td class="px-6 py-4 whitespace-nowrap space-x-3">
+                            <a href="{{ path('booking_history_show', {'id': booking.id}) }}" class="text-blue-600 hover:text-blue-900 hover:underline">Show</a>
+                            <a href="{{ path('booking_history_edit', {'id': booking.id}) }}" class="text-green-600 hover:text-green-900 hover:underline">Edit</a>
                             <form action="{{ path('booking_history_delete', {'id': booking.id}) }}" method="post" class="inline">
-                                    <a href="{{ path('booking_history_show', {'id': booking.id}) }}" class="text-blue-600 hover:text-blue-900 hover:underline">
-        Show 
-    </a>
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ booking.id) }}">
                                 <button type="submit" class="text-red-600 hover:text-red-900 hover:underline">Delete</button>
                             </form>

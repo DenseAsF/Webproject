@@ -327,6 +327,37 @@ class BookingController extends AbstractController
         return $this->redirectToRoute('booking_history');
     }
 
+    #[Route('/history/{id}/edit', name: 'booking_history_edit', methods: ['GET','POST'])]
+    public function editHistory(BookingHistory $history, Request $request, EntityManagerInterface $em): Response
+    {
+        $form = $this->createFormBuilder($history)
+            ->add('customerName', \Symfony\Component\Form\Extension\Core\Type\TextType::class)
+            ->add('roomNumber', \Symfony\Component\Form\Extension\Core\Type\TextType::class)
+            ->add('checkInDate', \Symfony\Component\Form\Extension\Core\Type\DateTimeType::class, [
+                'widget' => 'single_text',
+            ])
+            ->add('checkOutDate', \Symfony\Component\Form\Extension\Core\Type\DateTimeType::class, [
+                'widget' => 'single_text',
+            ])
+            ->add('totalPrice', \Symfony\Component\Form\Extension\Core\Type\NumberType::class)
+            ->add('status', \Symfony\Component\Form\Extension\Core\Type\TextType::class)
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+
+            $this->addFlash('success', 'Booking history updated successfully!');
+            return $this->redirectToRoute('booking_history_show', ['id' => $history->getId()]);
+        }
+
+        return $this->render('booking/historyEdit.html.twig', [
+            'form' => $form->createView(),
+            'booking_history' => $history,
+        ]);
+    }
+
     #[Route('/search/customer', name: 'booking_search_customer', methods: ['GET'])]
     public function searchCustomer(Request $request, UserRepository $userRepo): Response // Changed to UserRepository
     {

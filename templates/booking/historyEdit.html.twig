@@ -1,0 +1,68 @@
+{% extends 'adminbase.html.twig' %}
+
+{% block title %}Edit History #{{ booking_history.id }}{% endblock %}
+
+{% block body %}
+<div class="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+    <h1 class="text-2xl font-bold mb-6 helvetica-condensed">Edit Booking History #{{ booking_history.id }}</h1>
+
+    {% for message in app.flashes('success') %}
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    {{ form_start(form, {
+        attr: {
+            class: 'space-y-4'
+        }
+    }) }}
+
+        <div>
+            {{ form_label(form.customerName) }}
+            {{ form_widget(form.customerName, { attr: { class: 'mt-1 block w-full px-3 py-2 border rounded-md' } }) }}
+            {{ form_errors(form.customerName) }}
+        </div>
+
+        <div>
+            {{ form_label(form.roomNumber) }}
+            {{ form_widget(form.roomNumber, { attr: { class: 'mt-1 block w-full px-3 py-2 border rounded-md' } }) }}
+            {{ form_errors(form.roomNumber) }}
+        </div>
+
+        <div>
+            {{ form_label(form.checkInDate) }}
+            {{ form_widget(form.checkInDate, { attr: { class: 'mt-1 block w-full px-3 py-2 border rounded-md' } }) }}
+            {{ form_errors(form.checkInDate) }}
+        </div>
+
+        <div>
+            {{ form_label(form.checkOutDate) }}
+            {{ form_widget(form.checkOutDate, { attr: { class: 'mt-1 block w-full px-3 py-2 border rounded-md' } }) }}
+            {{ form_errors(form.checkOutDate) }}
+        </div>
+
+        <div>
+            {{ form_label(form.totalPrice) }}
+            {{ form_widget(form.totalPrice, { attr: { class: 'mt-1 block w-full px-3 py-2 border rounded-md' } }) }}
+            {{ form_errors(form.totalPrice) }}
+        </div>
+
+        <div>
+            {{ form_label(form.status) }}
+            {{ form_widget(form.status, { attr: { class: 'mt-1 block w-full px-3 py-2 border rounded-md' } }) }}
+            {{ form_errors(form.status) }}
+        </div>
+
+        <div class="flex gap-4 mt-6">
+            <button type="submit" class="flex-1 bg-[rgb(29,53,153)] text-white py-2 px-4 rounded-md hover:bg-[rgb(242,182,34)] transition-colors font-medium">
+                Save Changes
+            </button>
+            <a href="{{ path('booking_history_show', {'id': booking_history.id}) }}" class="flex-1 bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition-colors font-medium flex items-center justify-center no-underline">
+                Cancel
+            </a>
+        </div>
+
+    {{ form_end(form) }}
+</div>
+{% endblock %}

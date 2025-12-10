@@ -116,7 +116,8 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+function initBookingNewPage() {
+
     const checkInInput = document.querySelector('#{{ form.checkInDate.vars.id }}');
     const checkOutInput = document.querySelector('#{{ form.checkOutDate.vars.id }}');
     const roomsDropdown = document.getElementById('roomsDropdown');
@@ -288,7 +289,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     initializeServicePrices();
     calculateTotal();
-});
+}
+
+// Support both full page loads and Turbo-powered navigation
+document.addEventListener('DOMContentLoaded', initBookingNewPage);
+document.addEventListener('turbo:load', initBookingNewPage);
 </script>
 
 <style>
