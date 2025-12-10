@@ -399,111 +399,131 @@ public function customerIndex(UserRepository $repo, Request $request): Response
     }
 
     #[Route('/profile', name: 'user_profile')]
-public function profile(): Response
-{
-    $user = $this->getUser();
+    public function profile(): Response
+    {
+        $user = $this->getUser();
 
-    if (!$user) {
-        throw $this->createAccessDeniedException("You must be logged in.");
+        if (!$user) {
+            throw $this->createAccessDeniedException("You must be logged in.");
+        }
+
+        return $this->render('user/profile.html.twig', [
+            'user' => $user
+        ]);
     }
 
-    return $this->render('user/profile.html.twig', [
-        'user' => $user
-    ]);
-}
-#[Route('/user/profile/edit', name: 'user_profile_edit')]
-public function editProfile(
-    Request $request,
-    EntityManagerInterface $em,
-    UserPasswordHasherInterface $hasher,
-    UserRepository $repo
-): Response {
+    #[Route('/user/profile/edit', name: 'user_profile_edit')]
+    public function editProfile(
+        Request $request,
+        EntityManagerInterface $em,
+        UserPasswordHasherInterface $hasher,
+        UserRepository $repo
+    ): Response {
 
-    /** @var User $user */
-    $user = $this->getUser();
+        /** @var User $user */
+        $user = $this->getUser();
 
-    if (!$user) {
-        throw $this->createAccessDeniedException("You must login.");
-    }
-
-    $originalEmail = $user->getEmail();
-    $originalUsername = $user->getUsername();
-
-    $form = $this->createFormBuilder($user)
-        ->add('username', TextType::class)
-        ->add('name', TextType::class)
-        ->add('email', EmailType::class)
-        ->add('phone', TextType::class)
-        ->add('age', IntegerType::class)
-        ->add('plainPassword', PasswordType::class, [
-            'mapped' => false,
-            'required' => false,
-        ])
-        ->getForm();
-
-    $form->handleRequest($request);
-
-    if ($form->isSubmitted()) {
-        $errors = false;
-
-        $username = trim($form->get('username')->getData());
-        $email    = trim($form->get('email')->getData());
-        $phone    = trim($form->get('phone')->getData());
-        $age      = $form->get('age')->getData();
-        $password = $form->get('plainPassword')->getData();
-
-        if (strlen($username) < 3) {
-            $form->get('username')->addError(new FormError('Username must be at least 3 characters'));
-            $errors = true;
-        } elseif ($username !== $originalUsername && $repo->findOneBy(['username'=>$username])) {
-            $form->get('username')->addError(new FormError('Username already exists'));
-            $errors = true;
+        if (!$user) {
+            throw $this->createAccessDeniedException("You must login.");
         }
 
+        $originalEmail = $user->getEmail();
+        $originalUsername = $user->getUsername();
 
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $form->get('email')->addError(new FormError('Invalid email'));
-            $errors = true;
-        } elseif ($email !== $originalEmail && $repo->findOneBy(['email'=>$email])) {
-            $form->get('email')->addError(new FormError('Email already exists'));
-            $errors = true;
-        }
+        // Bind the form to a separate data array so we don't mutate the
+        // authenticated User entity until validation has passed.
+        $data = [
+            'username' => $user->getUsername(),
+            'name' => $user->getName(),
+            'email' => $user->getEmail(),
+            'phone' => $user->getPhone(),
+            'age' => $user->getAge(),
+        ];
 
+        $form = $this->createFormBuilder($data)
+            ->add('username', TextType::class)
+            ->add('name', TextType::class)
+            ->add('email', EmailType::class)
+            ->add('phone', TextType::class)
+            ->add('age', IntegerType::class)
+            ->add('plainPassword', PasswordType::class, [
+                'mapped' => false,
+                'required' => false,
+            ])
+            ->getForm();
 
-        if (!preg_match('/^09\d{9}$/', $phone)) {
-            $form->get('phone')->addError(new FormError('Phone must start with 09 and be 11 digits'));
-            $errors = true;
-        }
+        $form->handleRequest($request);
 
+        if ($form->isSubmitted()) {
+            $errors = false;
 
-        if ($age < 18 || $age > 120) {
-            $form->get('age')->addError(new FormError('Age must be between 18 and 120'));
-            $errors = true;
-        }
+            $username = trim($form->get('username')->getData());
+            $name     = trim($form->get('name')->getData());
+            $email    = trim($form->get('email')->getData());
+            $phone    = trim($form->get('phone')->getData());
+            $age      = $form->get('age')->getData();
+            $password = $form->get('plainPassword')->getData();
 
-
-        if ($password && strlen($password) < 6) {
-            $form->get('plainPassword')->addError(new FormError('Password must be at least 6 characters'));
-            $errors = true;
-        }
-
-        if (!$errors) {
-            if ($password) {
-                $user->setPassword($hasher->hashPassword($user, $password));
+            if (strlen($username) < 3) {
+                $form->get('username')->addError(new FormError('Username must be at least 3 characters'));
+                $errors = true;
+            } elseif ($username !== $originalUsername && $repo->findOneBy(['username' => $username])) {
+                $form->get('username')->addError(new FormError('Username already exists'));
+                $errors = true;
             }
 
-            $em->flush();
+            if (empty($name)) {
+                $form->get('name')->addError(new FormError('Name is required'));
+                $errors = true;
+            }
 
-            $this->addFlash('success', 'Profile updated successfully!');
-            return $this->redirectToRoute('user_profile');
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $form->get('email')->addError(new FormError('Invalid email'));
+                $errors = true;
+            } elseif ($email !== $originalEmail && $repo->findOneBy(['email' => $email])) {
+                $form->get('email')->addError(new FormError('Email already exists'));
+                $errors = true;
+            }
+
+            if (!preg_match('/^09\\d{9}$/', $phone)) {
+                $form->get('phone')->addError(new FormError('Phone must start with 09 and be 11 digits'));
+                $errors = true;
+            }
+
+            if (!is_numeric($age) || $age < 18 || $age > 120) {
+                $form->get('age')->addError(new FormError('Age must be between 18 and 120'));
+                $errors = true;
+            }
+
+            if ($password && strlen($password) < 6) {
+                $form->get('plainPassword')->addError(new FormError('Password must be at least 6 characters'));
+                $errors = true;
+            }
+
+            if (!$errors) {
+                // Only now apply the validated values to the actual User entity
+                $user->setUsername($username);
+                $user->setName($name);
+                $user->setEmail($email);
+                $user->setPhone($phone);
+                $user->setAge((int) $age);
+
+                if ($password) {
+                    $user->setPassword($hasher->hashPassword($user, $password));
+                }
+
+                $em->flush();
+
+                $this->addFlash('success', 'Profile updated successfully!');
+                return $this->redirectToRoute('user_profile');
+            }
+
+            // $this->addFlash('error', 'Please fix the errors.');
         }
 
-        // $this->addFlash('error', 'Please fix the errors.');
+        return $this->render('user/profile_edit.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
-
-    return $this->render('user/profile_edit.html.twig', [
-        'form' => $form->createView(),
-    ]);
-}
 
 }

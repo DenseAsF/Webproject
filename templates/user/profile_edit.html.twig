@@ -36,24 +36,13 @@
             {# ---------- USERNAME ---------- #}
             <div>
                 {{ form_label(form.username) }}
-
                 {{ form_widget(form.username, {
                     attr: {
                         class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm '
-                        ~ (form.username.vars.errors|length > 0
-                            ? 'border-red-500'
-                            : 'border-gray-300'
-                        )
+                            ~ (form.username.vars.errors|length > 0 ? 'border-red-500' : 'border-gray-300')
                     }
                 }) }}
-
-                {% if form.username.vars.errors|length > 0 %}
-                    <ul class="mt-1 text-sm text-red-600 space-y-1">
-                        {% for error in form.username.vars.errors %}
-                            <li>{{ error.message }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
+                {{ form_errors(form.username) }}
             </div>
 
             {# ---------- NAME ---------- #}
@@ -62,19 +51,10 @@
                 {{ form_widget(form.name, {
                     attr: {
                         class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm '
-                        ~ (form.name.vars.errors|length > 0
-                            ? 'border-red-500'
-                            : 'border-gray-300'
-                        )
+                            ~ (form.name.vars.errors|length > 0 ? 'border-red-500' : 'border-gray-300')
                     }
                 }) }}
-                {% if form.name.vars.errors|length > 0 %}
-                    <ul class="mt-1 text-sm text-red-600 space-y-1">
-                        {% for error in form.name.vars.errors %}
-                            <li>{{ error.message }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
+                {{ form_errors(form.name) }}
             </div>
 
             {# ---------- EMAIL ---------- #}
@@ -83,19 +63,10 @@
                 {{ form_widget(form.email, {
                     attr: {
                         class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm '
-                        ~ (form.email.vars.errors|length > 0
-                            ? 'border-red-500'
-                            : 'border-gray-300'
-                        )
+                            ~ (form.email.vars.errors|length > 0 ? 'border-red-500' : 'border-gray-300')
                     }
                 }) }}
-                {% if form.email.vars.errors|length > 0 %}
-                    <ul class="mt-1 text-sm text-red-600 space-y-1">
-                        {% for error in form.email.vars.errors %}
-                            <li>{{ error.message }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
+                {{ form_errors(form.email) }}
             </div>
 
             {# ---------- PHONE ---------- #}
@@ -104,19 +75,10 @@
                 {{ form_widget(form.phone, {
                     attr: {
                         class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm '
-                        ~ (form.phone.vars.errors|length > 0
-                            ? 'border-red-500'
-                            : 'border-gray-300'
-                        )
+                            ~ (form.phone.vars.errors|length > 0 ? 'border-red-500' : 'border-gray-300')
                     }
                 }) }}
-                {% if form.phone.vars.errors|length > 0 %}
-                    <ul class="mt-1 text-sm text-red-600 space-y-1">
-                        {% for error in form.phone.vars.errors %}
-                            <li>{{ error.message }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
+                {{ form_errors(form.phone) }}
             </div>
 
             {# ---------- AGE ---------- #}
@@ -125,19 +87,10 @@
                 {{ form_widget(form.age, {
                     attr: {
                         class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm '
-                        ~ (form.age.vars.errors|length > 0
-                            ? 'border-red-500'
-                            : 'border-gray-300'
-                        )
+                            ~ (form.age.vars.errors|length > 0 ? 'border-red-500' : 'border-gray-300')
                     }
                 }) }}
-                {% if form.age.vars.errors|length > 0 %}
-                    <ul class="mt-1 text-sm text-red-600 space-y-1">
-                        {% for error in form.age.vars.errors %}
-                            <li>{{ error.message }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
+                {{ form_errors(form.age) }}
             </div>
 
             {# ---------- PASSWORD ---------- #}
@@ -146,23 +99,13 @@
                 {{ form_widget(form.plainPassword, {
                     attr: {
                         class: 'mt-1 block w-full px-3 py-2 border rounded-md shadow-sm '
-                        ~ (form.plainPassword.vars.errors|length > 0
-                            ? 'border-red-500'
-                            : 'border-gray-300'
-                        )
+                            ~ (form.plainPassword.vars.errors|length > 0 ? 'border-red-500' : 'border-gray-300')
                     }
                 }) }}
-                {% if form.plainPassword.vars.errors|length > 0 %}
-                    <ul class="mt-1 text-sm text-red-600 space-y-1">
-                        {% for error in form.plainPassword.vars.errors %}
-                            <li>{{ error.message }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
+                {{ form_errors(form.plainPassword) }}
             </div>
 
         </div>
-
 
         <button
             class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded shadow"
