@@ -42,6 +42,8 @@ security:
         - { path: ^/user/edit, roles: ['ROLE_ADMIN'] }
         - { path: ^/user/show, roles: ['ROLE_ADMIN'] }
         - { path: ^/user/delete, roles: ['ROLE_ADMIN'] }
+        - { path: ^/user/.*/enable, roles: ['ROLE_ADMIN'] }
+        - { path: ^/user/.*/disable, roles: ['ROLE_ADMIN'] }
         - { path: ^/history, roles: ['ROLE_ADMIN'] }
         - { path: ^/user$, roles: ['ROLE_ADMIN'] }
       

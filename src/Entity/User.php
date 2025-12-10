@@ -41,6 +41,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: 'account_number', length: 50, unique: true)]
     private string $accountNumber;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $enabled = true;
+
     #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $createdAt = null;
 
@@ -53,6 +56,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->createdAt = new \DateTime();
         $this->roles = ['ROLE_USER'];
+        $this->enabled = true;
     }
 
     public function getId(): ?int { return $this->id; }
@@ -91,6 +95,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getAccountNumber(): string { return $this->accountNumber; }
     public function setAccountNumber(string $accountNumber): self { $this->accountNumber = $accountNumber; return $this; }
+
+    public function isEnabled(): bool { return $this->enabled; }
+    public function setEnabled(bool $enabled): self { $this->enabled = $enabled; return $this; }
 
     public function getCreatedAt(): ?\DateTimeInterface { return $this->createdAt; }
     public function setCreatedAt(\DateTimeInterface $createdAt): self { $this->createdAt = $createdAt; return $this; }

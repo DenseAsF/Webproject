@@ -387,7 +387,7 @@ public function customerIndex(UserRepository $repo, Request $request): Response
     ]);
 }
 
-    #[Route('/{id}/delete', name: 'user_delete', requirements: ['id' => '\d+'])]
+    #[Route('/{id}/delete', name: 'user_delete', requirements: ['id' => '\\d+'])]
     public function delete(Request $request, User $user, EntityManagerInterface $em): Response
     {
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
@@ -395,6 +395,33 @@ public function customerIndex(UserRepository $repo, Request $request): Response
             $em->flush();
         }
         
+        return $this->redirectToRoute('user_index');
+    }
+
+    #[Route('/{id}/disable', name: 'user_disable', requirements: ['id' => '\\d+'], methods: ['POST'])]
+    public function disable(User $user, EntityManagerInterface $em): Response
+    {
+        $currentUser = $this->getUser();
+
+        if ($currentUser && $currentUser instanceof User && $currentUser->getId() === $user->getId()) {
+            $this->addFlash('error', 'You cannot disable your own account.');
+            return $this->redirectToRoute('user_index');
+        }
+
+        $user->setEnabled(false);
+        $em->flush();
+
+        $this->addFlash('success', 'User account disabled successfully.');
+        return $this->redirectToRoute('user_index');
+    }
+
+    #[Route('/{id}/enable', name: 'user_enable', requirements: ['id' => '\\d+'], methods: ['POST'])]
+    public function enable(User $user, EntityManagerInterface $em): Response
+    {
+        $user->setEnabled(true);
+        $em->flush();
+
+        $this->addFlash('success', 'User account enabled successfully.');
         return $this->redirectToRoute('user_index');
     }
 
