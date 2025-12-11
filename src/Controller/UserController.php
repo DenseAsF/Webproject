@@ -447,9 +447,18 @@ public function customerIndex(UserRepository $repo, Request $request): Response
     ]);
 }
 
-    #[Route('/{id}/delete', name: 'user_delete', requirements: ['id' => '\\d+'])]
+    #[Route('/{id}/delete', name: 'user_delete', requirements: ['id' => '\d+'])]
     public function delete(Request $request, User $user, EntityManagerInterface $em, ActivityLogger $activityLogger): Response
     {
+        // Prevent staff from deleting staff or admin users
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            $targetRoles = $user->getRoles();
+            if (in_array('ROLE_ADMIN', $targetRoles) || in_array('ROLE_STAFF', $targetRoles)) {
+                $this->addFlash('error', 'You cannot delete staff or admin accounts.');
+                return $this->redirectToRoute('customer_index');
+            }
+        }
+
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
             $deletedUserId = $user->getId();
             $deletedUsername = $user->getUsername();
@@ -465,10 +474,14 @@ public function customerIndex(UserRepository $repo, Request $request): Response
             );
         }
         
-        return $this->redirectToRoute('user_index');
+        if ($this->isGranted('ROLE_ADMIN')) {
+            return $this->redirectToRoute('user_index');
+        }
+        
+        return $this->redirectToRoute('customer_index');
     }
 
-    #[Route('/{id}/disable', name: 'user_disable', requirements: ['id' => '\\d+'], methods: ['POST'])]
+    #[Route('/{id}/disable', name: 'user_disable', requirements: ['id' => '\d+'], methods: ['POST'])]
     public function disable(User $user, EntityManagerInterface $em, ActivityLogger $activityLogger): Response
     {
         $currentUser = $this->getUser();
