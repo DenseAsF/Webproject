@@ -37,7 +37,7 @@ class ActivityLogger
             $log->setUsername($actor->getUsername());
 
             $roles = $actor->getRoles();
-            $primaryRole = $roles[0] ?? null;
+            $primaryRole = $roles[0] ?? 'ROLE_USER';
 
             if (is_string($primaryRole) && str_starts_with($primaryRole, 'ROLE_')) {
                 $primaryRole = substr($primaryRole, 5); // e.g. ROLE_ADMIN -> ADMIN

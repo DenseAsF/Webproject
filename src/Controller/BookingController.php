@@ -19,10 +19,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-
 #[Route('/booking')]
 class BookingController extends AbstractController
 {
+
     #[Route('/', name: 'booking_index', methods: ['GET'])]
     public function index(BookingRepository $bookingRepo, UserRepository $userRepo, Request $request): Response
     {
@@ -135,13 +135,11 @@ class BookingController extends AbstractController
                 $em->persist($booking);
                 $em->flush();
 
-                // Log booking creation (staff creates a booking)
                 $activityLogger->log(
                     action: 'BOOKING_CREATE',
                     entityType: 'Booking',
                     entityId: $booking->getId(),
-                    description: 'Booking created for user ' . $user->getUsername() . ' (Booking ID ' . $booking->getId() . ')'
-                );
+                    description: 'Booking created for ' . $user->getUsername());
 
                 return $this->redirectToRoute('booking_index');
 
@@ -294,7 +292,7 @@ class BookingController extends AbstractController
     }
 
     #[Route('/{id}/checkout', name: 'booking_checkout', methods: ['POST'])]
-    public function checkout(Request $request, Booking $booking, EntityManagerInterface $em): Response
+    public function checkout(Request $request, Booking $booking, EntityManagerInterface $em, ActivityLogger $activityLogger): Response
     {
         if ($this->isCsrfTokenValid('checkout'.$booking->getId(), $request->request->get('_token'))) {
             $history = new BookingHistory();
@@ -320,24 +318,39 @@ class BookingController extends AbstractController
             $em->persist($history);
             $em->remove($booking);
             $em->flush();
+
+            $activityLogger->log(
+                action: 'BOOKING_CHECKOUT',
+                entityType: 'Booking',
+                entityId: $history->getId(),
+                description: 'Checked out booking for ' . $history->getCustomerName()
+            );
         }
 
         return $this->redirectToRoute('booking_index');
     }
 
     #[Route('/history/{id}/delete', name: 'booking_history_delete', methods: ['POST'])]
-    public function deleteHistory(BookingHistory $history, Request $request, EntityManagerInterface $em): Response
+    public function deleteHistory(BookingHistory $history, Request $request, EntityManagerInterface $em, ActivityLogger $activityLogger): Response
     {
         if ($this->isCsrfTokenValid('delete' . $history->getId(), $request->request->get('_token'))) {
+            $customerName = $history->getCustomerName();
             $em->remove($history);
             $em->flush();
+
+            $activityLogger->log(
+                action: 'BOOKING_HISTORY_DELETE',
+                entityType: 'BookingHistory',
+                entityId: $history->getId(),
+                description: 'Deleted booking history for ' . $customerName
+            );
         }
 
         return $this->redirectToRoute('booking_history');
     }
 
     #[Route('/history/{id}/edit', name: 'booking_history_edit', methods: ['GET','POST'])]
-    public function editHistory(BookingHistory $history, Request $request, EntityManagerInterface $em): Response
+    public function editHistory(BookingHistory $history, Request $request, EntityManagerInterface $em, ActivityLogger $activityLogger): Response
     {
         $form = $this->createFormBuilder($history)
             ->add('customerName', \Symfony\Component\Form\Extension\Core\Type\TextType::class)
@@ -356,6 +369,13 @@ class BookingController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
+
+            $activityLogger->log(
+                action: 'BOOKING_HISTORY_EDIT',
+                entityType: 'BookingHistory',
+                entityId: $history->getId(),
+                description: 'Edited booking history for ' . $history->getCustomerName()
+            );
 
             $this->addFlash('success', 'Booking history updated successfully!');
             return $this->redirectToRoute('booking_history_show', ['id' => $history->getId()]);
@@ -426,11 +446,18 @@ class BookingController extends AbstractController
     }
 
     #[Route('/{id}/checkin', name: 'booking_checkin', methods: ['POST'])]
-    public function checkIn(Request $request, Booking $booking, EntityManagerInterface $em): Response
+    public function checkIn(Request $request, Booking $booking, EntityManagerInterface $em, ActivityLogger $activityLogger): Response
     {
         if ($this->isCsrfTokenValid('checkin' . $booking->getId(), $request->request->get('_token'))) {
             $booking->setStatus('Checked In');
             $em->flush();
+
+            $activityLogger->log(
+                action: 'BOOKING_CHECKIN',
+                entityType: 'Booking',
+                entityId: $booking->getId(),
+                description: 'Checked in booking for ' . $booking->getUser()->getUsername()
+            );
         }
 
         return $this->redirectToRoute('booking_index');
@@ -505,12 +532,13 @@ class BookingController extends AbstractController
 
                 $em->flush();
 
-                // Log booking update (staff or admin updates a booking)
+// update sa booking
+
                 $activityLogger->log(
                     action: 'BOOKING_UPDATE',
                     entityType: 'Booking',
                     entityId: $booking->getId(),
-                    description: 'Booking updated (ID ' . $booking->getId() . ')'
+                    description: 'Booking updated'
                 );
 
                 return $this->redirectToRoute('booking_show', ['id' => $booking->getId()]);

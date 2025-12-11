@@ -41,11 +41,6 @@
     <nav class="flex flex-col p-4 space-y-2 helvetica-condensed text-white text-sm">
 
 
-        <a href="{{ path('booking_index') }}"
-           class="px-4 py-2 rounded hover:bg-[rgb(242,182,34)] 
-           {% if app.request.attributes.get('_route') == 'booking_index' %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">
-            Bookings
-        </a>
 
          <a href="{{ path('room_index') }}"
            class="px-4 py-2 rounded hover:bg-[rgb(242,182,34)]
@@ -57,6 +52,12 @@
            class="px-4 py-2 rounded hover:bg-[rgb(242,182,34)]
            {% if app.request.attributes.get('_route') == 'customer_index' %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">
             Customers
+        </a>
+
+          <a href="{{ path('booking_index') }}"
+           class="px-4 py-2 rounded hover:bg-[rgb(242,182,34)] 
+           {% if app.request.attributes.get('_route') == 'booking_index' %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">
+            Bookings
         </a>
 
         <a href="{{ path('booking_history') }}"

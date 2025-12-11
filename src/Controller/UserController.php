@@ -207,7 +207,7 @@ public function new(
                     description: 'Admin created user ' . $user->getUsername()
                 );
 
-                $this->addFlash('success', 'User created successfully!');
+                // $this->addFlash('success', 'User created successfully!');
 
                 if ($this->isGranted('ROLE_ADMIN')) {
                     return $this->redirectToRoute('user_index');
@@ -253,7 +253,8 @@ public function edit(
     Request $request,
     EntityManagerInterface $em,
     UserPasswordHasherInterface $hasher,
-    UserRepository $userRepo
+    UserRepository $userRepo,
+    ActivityLogger $activityLogger
 ): Response {
     $originalHash = $user->getPassword();
     $originalUsername = $user->getUsername();
@@ -391,6 +392,14 @@ public function edit(
                 }
                 
                 $em->flush();
+
+                // Log the edit
+                $activityLogger->log(
+                    action: 'USER_EDIT',
+                    entityType: 'User',
+                    entityId: $user->getId(),
+                    description: 'Edited user ' . $user->getUsername()
+                );
                 
                 $this->addFlash('success', 'User updated successfully!');
 
@@ -460,7 +469,7 @@ public function customerIndex(UserRepository $repo, Request $request): Response
     }
 
     #[Route('/{id}/disable', name: 'user_disable', requirements: ['id' => '\\d+'], methods: ['POST'])]
-    public function disable(User $user, EntityManagerInterface $em): Response
+    public function disable(User $user, EntityManagerInterface $em, ActivityLogger $activityLogger): Response
     {
         $currentUser = $this->getUser();
 
@@ -472,15 +481,29 @@ public function customerIndex(UserRepository $repo, Request $request): Response
         $user->setEnabled(false);
         $em->flush();
 
+        $activityLogger->log(
+            action: 'USER_DISABLE',
+            entityType: 'User',
+            entityId: $user->getId(),
+            description: 'Disabled user ' . $user->getUsername()
+        );
+
         $this->addFlash('success', 'User account disabled successfully.');
         return $this->redirectToRoute('user_index');
     }
 
     #[Route('/{id}/enable', name: 'user_enable', requirements: ['id' => '\\d+'], methods: ['POST'])]
-    public function enable(User $user, EntityManagerInterface $em): Response
+    public function enable(User $user, EntityManagerInterface $em, ActivityLogger $activityLogger): Response
     {
         $user->setEnabled(true);
         $em->flush();
+
+        $activityLogger->log(
+            action: 'USER_ENABLE',
+            entityType: 'User',
+            entityId: $user->getId(),
+            description: 'Enabled user ' . $user->getUsername()
+        );
 
         $this->addFlash('success', 'User account enabled successfully.');
         return $this->redirectToRoute('user_index');
