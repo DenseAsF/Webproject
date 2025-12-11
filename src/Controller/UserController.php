@@ -64,7 +64,15 @@ public function new(
         ->add('username', \Symfony\Component\Form\Extension\Core\Type\TextType::class, ['required' => false])
         ->add('name', \Symfony\Component\Form\Extension\Core\Type\TextType::class, ['required' => false])
         ->add('email', \Symfony\Component\Form\Extension\Core\Type\EmailType::class, ['required' => false])
-        ->add('phone', \Symfony\Component\Form\Extension\Core\Type\TextType::class, ['required' => false])
+        ->add('phone', \Symfony\Component\Form\Extension\Core\Type\TextType::class, [
+            'required' => false,
+            'attr' => [
+                'maxlength' => 11,
+                'minlength' => 11,
+                'inputmode' => 'numeric',
+                'pattern' => '\\d*',
+            ],
+        ])
         ->add('age', \Symfony\Component\Form\Extension\Core\Type\IntegerType::class, ['required' => false])
         ->add('roles', \Symfony\Component\Form\Extension\Core\Type\ChoiceType::class, [
             'choices' => [
@@ -88,7 +96,8 @@ public function new(
 
         $hasErrors = false;
 
- 
+        $isAdmin = $this->isGranted('ROLE_ADMIN');
+
         $username = trim($form->get('username')->getData() ?? '');
         $name     = trim($form->get('name')->getData() ?? '');
         $email    = trim($form->get('email')->getData() ?? '');
@@ -147,9 +156,17 @@ public function new(
             $hasErrors = true;
         }
      
-        if (empty($roles)) {
-            $form->get('roles')->addError(new FormError('Select at least one role'));
-            $hasErrors = true;
+        // Roles validation: only admins choose roles.
+        // For non-admins (e.g. staff), silently default new users to ROLE_USER.
+        if ($isAdmin) {
+            if (empty($roles)) {
+                $form->get('roles')->addError(new FormError('Select at least one role'));
+                $hasErrors = true;
+            }
+        } else {
+            if (empty($roles)) {
+                $roles = ['ROLE_USER'];
+            }
         }
 
         if ($password === '') {
@@ -160,16 +177,13 @@ public function new(
             $hasErrors = true;
         }
 
-        if ($form->isSubmitted()) {
-    dump("FORM SUBMITTED");
-} else {
-    dump("FORM NOT SUBMITTED");
-}
-       
         if (!$hasErrors) {
             try {
                 $user->setPassword($hasher->hashPassword($user, $password));
-
+                // Only admins control roles; non-admins always create regular users.
+                if (!$isAdmin) {
+                    $roles = ['ROLE_USER'];
+                }
                 if (!is_array($roles)) {
                     $roles = [$roles];
                 }
@@ -194,7 +208,12 @@ public function new(
                 );
 
                 $this->addFlash('success', 'User created successfully!');
-                return $this->redirectToRoute('user_new');
+
+                if ($this->isGranted('ROLE_ADMIN')) {
+                    return $this->redirectToRoute('user_index');
+                }
+
+                return $this->redirectToRoute('customer_index');
 
             } catch (\Exception $e) {
                 $this->addFlash('error', 'Error: ' . $e->getMessage());
@@ -245,7 +264,15 @@ public function edit(
         ->add('username', \Symfony\Component\Form\Extension\Core\Type\TextType::class, ['required' => false])
         ->add('name', \Symfony\Component\Form\Extension\Core\Type\TextType::class, ['required' => false])
         ->add('email', \Symfony\Component\Form\Extension\Core\Type\EmailType::class, ['required' => false])
-        ->add('phone', \Symfony\Component\Form\Extension\Core\Type\TextType::class, ['required' => false])
+        ->add('phone', \Symfony\Component\Form\Extension\Core\Type\TextType::class, [
+            'required' => false,
+            'attr' => [
+                'maxlength' => 11,
+                'minlength' => 11,
+                'inputmode' => 'numeric',
+                'pattern' => '\\d*',
+            ],
+        ])
         ->add('age', \Symfony\Component\Form\Extension\Core\Type\IntegerType::class, ['required' => false])
         ->add('roles', \Symfony\Component\Form\Extension\Core\Type\ChoiceType::class, [
             'choices' => [
@@ -267,7 +294,8 @@ public function edit(
     if ($form->isSubmitted()) {
         $hasErrors = false;
         
-    
+        $isAdmin = $this->isGranted('ROLE_ADMIN');
+
         $username = trim($form->get('username')->getData() ?? '');
         $name = trim($form->get('name')->getData() ?? '');
         $email = trim($form->get('email')->getData() ?? '');
@@ -327,10 +355,13 @@ public function edit(
             $hasErrors = true;
         }
         
-       
-        if (empty($roles)) {
-            $form->get('roles')->addError(new \Symfony\Component\Form\FormError('Select at least one role'));
-            $hasErrors = true;
+        // Roles validation: only admins are required to select roles and can modify them.
+        // For non-admins (e.g. staff), keep existing roles and do not validate this field.
+        if ($isAdmin) {
+            if (empty($roles)) {
+                $form->get('roles')->addError(new \Symfony\Component\Form\FormError('Select at least one role'));
+                $hasErrors = true;
+            }
         }
         
        
@@ -349,15 +380,25 @@ public function edit(
                     $user->setPassword($originalHash);
                 }
                
-                if (!is_array($roles)) {
-                    $roles = [$roles];
+                if ($isAdmin) {
+                    if (!is_array($roles)) {
+                        $roles = [$roles];
+                    }
+                    $user->setRoles($roles);
+                } else {
+
+                    $user->setRoles(['ROLE_USER']);
                 }
-                $user->setRoles($roles);
                 
                 $em->flush();
                 
                 $this->addFlash('success', 'User updated successfully!');
-                return $this->redirectToRoute('user_index');
+
+                if ($this->isGranted('ROLE_ADMIN')) {
+                    return $this->redirectToRoute('user_index');
+                }
+
+                return $this->redirectToRoute('customer_index');
                 
             } catch (\Exception $e) {
                 $this->addFlash('error', 'Error: ' . $e->getMessage());
@@ -476,9 +517,6 @@ public function customerIndex(UserRepository $repo, Request $request): Response
 
         $originalEmail = $user->getEmail();
         $originalUsername = $user->getUsername();
-
-        // Bind the form to a separate data array so we don't mutate the
-        // authenticated User entity until validation has passed.
         $data = [
             'username' => $user->getUsername(),
             'name' => $user->getName(),
@@ -548,7 +586,7 @@ public function customerIndex(UserRepository $repo, Request $request): Response
             }
 
             if (!$errors) {
-                // Only now apply the validated values to the actual User entity
+      
                 $user->setUsername($username);
                 $user->setName($name);
                 $user->setEmail($email);

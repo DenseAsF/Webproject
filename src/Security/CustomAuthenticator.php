@@ -60,11 +60,10 @@ class CustomAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
-            return new RedirectResponse($targetPath);
-        }
+        $user = $token->getUser();
+        $roles = method_exists($user, 'getRoles') ? $user->getRoles() : [];
 
-        return new RedirectResponse($this->urlGenerator->generate('booking_index'));
+        return new RedirectResponse($this->urlGenerator->generate('user_profile'));
     }
 
     protected function getLoginUrl(Request $request): string

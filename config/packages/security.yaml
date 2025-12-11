@@ -29,24 +29,29 @@ security:
         
     access_control:
         - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/user/profile, roles: ['ROLE_ADMIN','ROLE_STAFF','ROLE_USER'] }
         - { path: ^/user/profile/edit, roles: ['ROLE_ADMIN','ROLE_STAFF','ROLE_USER'] }
         - { path: ^/user/customer, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
-        - { path: ^/user/profile, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
         - { path: ^/booking, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
         - { path: ^/booking/new, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
         - { path: ^/room, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
-        - { path: ^/room/new, roles: ['ROLE_ADMIN'] }
-        - { path: ^/room/edit, roles: ['ROLE_ADMIN'] }
-        - { path: ^/room/delete, roles: ['ROLE_ADMIN'] }
-        - { path: ^/user/new, roles: ['ROLE_ADMIN'] }
-        - { path: ^/user/edit, roles: ['ROLE_ADMIN'] }
-        - { path: ^/user/show, roles: ['ROLE_ADMIN'] }
+        - { path: ^/room/new, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
+        - { path: ^/room/edit, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
+        - { path: ^/room/delete, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
+        - { path: ^/history, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
+        - { path: ^/history/new, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
+        - { path: ^/history/edit, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
+        - { path: ^/history/delete, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
+        - { path: ^/history/show, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
+        - { path: ^/user/new, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
+        - { path: ^/user/edit, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
+        - { path: ^/user/show, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
         - { path: ^/user/delete, roles: ['ROLE_ADMIN'] }
         - { path: ^/user/.*/enable, roles: ['ROLE_ADMIN'] }
         - { path: ^/user/.*/disable, roles: ['ROLE_ADMIN'] }
-        - { path: ^/history, roles: ['ROLE_ADMIN'] }
         - { path: ^/user$, roles: ['ROLE_ADMIN'] }
         - { path: ^/activity-log, roles: ['ROLE_ADMIN'] }
+        - { path: ^/stats, roles: ['ROLE_ADMIN'] }
       
        
         

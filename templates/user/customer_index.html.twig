@@ -4,6 +4,14 @@
 
 {% block body %}
 <div class="max-w-7xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+    <div class="flex justify-between items-center mb-6 helvetica-condensed">
+        <h1 class="text-2xl font-bold">Users</h1>
+        <a href="{{ path('user_new') }}" class="helvetica-condensed bg-[rgb(29,53,153)] text-white px-4 py-2 rounded-md hover:bg-[rgb(242,182,34)] transition">
+            Create Customer
+        </a>
+    </div>
+
+    {% if is_granted('ROLE_ADMIN') %}
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold">Customers</h1>
         <a href="{{ path('user_index') }}" 
@@ -11,8 +19,9 @@
             ← Back to All Users
         </a>
     </div>
+    {% endif %}
 
-    {# Search Form #}
+ {# search #}
     <div class="mb-6 p-4 bg-gray-50 rounded-lg">
         <form method="get" action="{{ path('customer_index') }}" class="flex gap-4 items-end">
             <div class="flex-1">
@@ -40,14 +49,14 @@
         </form>
     </div>
 
-    {# Customer Count #}
+{# pila customer #}
     <div class="mb-4">
         <p class="text-gray-600">
             Found {{ customers|length }} customer(s)
         </p>
     </div>
 
-    {# Customer Table #}
+{# table sa customer #}
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
@@ -70,6 +79,7 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             {{ customer.phone|slice(0, 4) }}-{{ customer.phone|slice(4, 3) }}-{{ customer.phone|slice(7, 4) }}
                         </td>
+{# actions#}
                         <td class="px-6 py-4 whitespace-nowrap space-x-2">
                             <a href="{{ path('user_show', {'id': customer.id}) }}" 
                                class="text-blue-600 hover:text-blue-900 hover:underline">

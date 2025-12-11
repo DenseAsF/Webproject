@@ -11,7 +11,7 @@
 
     <div class="space-y-6">
 
-        {# ---------- USERNAME ---------- #}
+  
         <div>
             {{ form_label(form.username, 'Username', { label_attr: { class: 'block text-sm font-medium text-gray-700' } }) }}
 
@@ -33,7 +33,7 @@
         </div>
 
 
-        {# ---------- FULL NAME ---------- #}
+   
         <div>
             {{ form_label(form.name, 'Full Name', { label_attr: { class: 'block text-sm font-medium text-gray-700' } }) }}
 
@@ -55,7 +55,7 @@
         </div>
 
 
-        {# ---------- EMAIL ---------- #}
+
         <div>
             {{ form_label(form.email, 'Email Address', { label_attr: { class: 'block text-sm font-medium text-gray-700' } }) }}
 
@@ -77,7 +77,7 @@
         </div>
 
 
-        {# ---------- PHONE ---------- #}
+
         <div>
             {{ form_label(form.phone, 'Phone Number', { label_attr: { class: 'block text-sm font-medium text-gray-700' } }) }}
 
@@ -99,7 +99,6 @@
         </div>
 
 
-        {# ---------- AGE ---------- #}
         <div>
             {{ form_label(form.age, 'Age', { label_attr: { class: 'block text-sm font-medium text-gray-700' } }) }}
 
@@ -121,7 +120,7 @@
         </div>
 
 
-        {# ---------- ROLES ---------- #}
+ {% if is_granted('ROLE_ADMIN') %}
         <div>
             {{ form_label(form.roles, 'Roles', { label_attr: { class: 'block text-sm font-medium text-gray-700' } }) }}
 
@@ -141,9 +140,8 @@
                 </ul>
             {% endif %}
         </div>
+{% endif %}
 
-
-        {# ---------- PASSWORD ---------- #}
         <div>
             {{ form_label(form.plainPassword, 'Password (leave blank to keep current)', { label_attr: { class: 'block text-sm font-medium text-gray-700' } }) }}
 
@@ -167,18 +165,18 @@
 
     </div>
 
-    {# SUBMIT BUTTON #}
     <button
         class="w-full mt-6 bg-[rgb(29,53,153)] text-white py-2 rounded-md hover:bg-[rgb(242,182,34)] transition-colors">
         Update User
     </button>
 
-    {{ form_end(form) }}
-
-    {# DELETE BUTTON #}
+    {{ form_end(form, { render_rest: false }) }}
+    
+{% if is_granted('ROLE_ADMIN') %}
     <div class="mt-6">
         {{ include('user/_delete_form.html.twig') }}
     </div>
+    {% endif %}
 
 </div>
 {% endblock %}

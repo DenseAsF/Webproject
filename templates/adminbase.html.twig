@@ -15,8 +15,7 @@
 
 <body class="bg-gray-50 text-gray-800 antialiased flex">
 
-
-
+{% if is_granted('ROLE_ADMIN') or is_granted('ROLE_STAFF') %}
 <aside class="w-64 min-h-screen bg-[rgb(29,53,153)] flex flex-col shadow-lg sticky top-0">
 
     <div class="p-6 flex items-center gap-3 border-b bg-white border-blue-800">
@@ -47,20 +46,14 @@
            {% if app.request.attributes.get('_route') == 'booking_index' %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">
             Bookings
         </a>
-  {% if is_granted('ROLE_ADMIN') %}
-        <a href="{{ path('room_index') }}"
+
+         <a href="{{ path('room_index') }}"
            class="px-4 py-2 rounded hover:bg-[rgb(242,182,34)]
            {% if app.request.attributes.get('_route') == 'room_index' %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">
             Rooms
         </a>
 
-                <a href="{{ path('user_index') }}"
-        class="px-4 py-2 rounded hover:bg-[rgb(242,182,34)]
-        {% if app.request.attributes.get('_route') in ['user_index', 'users_new'] %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">
-            Users
-        </a>
-
-        <a href="{{ path('customer_index') }}"
+            <a href="{{ path('customer_index') }}"
            class="px-4 py-2 rounded hover:bg-[rgb(242,182,34)]
            {% if app.request.attributes.get('_route') == 'customer_index' %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">
             Customers
@@ -69,13 +62,28 @@
         <a href="{{ path('booking_history') }}"
            class="px-4 py-2 rounded hover:bg-[rgb(242,182,34)]
            {% if app.request.attributes.get('_route') == 'booking_history' %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">
-            History
+            Booking History
+        </a>
+        
+  {% if is_granted('ROLE_ADMIN') %}
+
+                <a href="{{ path('user_index') }}"
+        class="px-4 py-2 rounded hover:bg-[rgb(242,182,34)]
+        {% if app.request.attributes.get('_route') in ['user_index', 'users_new'] %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">
+            Users
         </a>
 
         <a href="{{ path('activity_log_index') }}"
            class="px-4 py-2 rounded hover:bg-[rgb(242,182,34)]
            {% if app.request.attributes.get('_route') == 'activity_log_index' %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">
             Activity Logs
+        </a>
+
+
+        <a href="{{ path('admin_stats') }}"
+           class="px-4 py-2 rounded hover:bg-[rgb(242,182,34)]
+           {% if app.request.attributes.get('_route') == 'admin_stats' %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">
+            Statistics
         </a>
 {% endif %}
 
@@ -87,12 +95,15 @@
 
 
    <a href="{{ path('app_logout') }}"
+   data-turbo="false"
    class="inline-block px-4 py-2 rounded hover:bg-red-600">
     Logout
 </a>
     </nav>
 
-</aside>
+ </aside>
+{% endif %}
+
 
 <main class="flex-1 relative min-h-screen">
 
@@ -101,12 +112,6 @@
     <div class="relative z-10 p-6">
         {% block body %}{% endblock %}
     </div>
-
-    <footer class="bg-white mt-16 border-t">
-        <div class="text-center py-4 text-xs text-gray-500">
-            © {{ "now"|date("Y") }} Hotel Diongco
-        </div>
-    </footer>
 
 </main>
 
