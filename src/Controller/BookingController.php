@@ -333,6 +333,9 @@ class BookingController extends AbstractController
     #[Route('/history/{id}/delete', name: 'booking_history_delete', methods: ['POST'])]
     public function deleteHistory(BookingHistory $history, Request $request, EntityManagerInterface $em, ActivityLogger $activityLogger): Response
     {
+        // Restrict access to admin only
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        
         if ($this->isCsrfTokenValid('delete' . $history->getId(), $request->request->get('_token'))) {
             $customerName = $history->getCustomerName();
             $em->remove($history);
@@ -352,6 +355,9 @@ class BookingController extends AbstractController
     #[Route('/history/{id}/edit', name: 'booking_history_edit', methods: ['GET','POST'])]
     public function editHistory(BookingHistory $history, Request $request, EntityManagerInterface $em, ActivityLogger $activityLogger): Response
     {
+        // Restrict access to admin only
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        
         $form = $this->createFormBuilder($history)
             ->add('customerName', \Symfony\Component\Form\Extension\Core\Type\TextType::class)
             ->add('roomNumber', \Symfony\Component\Form\Extension\Core\Type\TextType::class)

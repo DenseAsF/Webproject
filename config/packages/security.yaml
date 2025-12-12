@@ -39,11 +39,11 @@ security:
         - { path: ^/room/new, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
         - { path: ^/room/edit, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
         - { path: ^/room/delete, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
-        - { path: ^/history, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
-        - { path: ^/history/new, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
-        - { path: ^/history/edit, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
-        - { path: ^/history/delete, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
-        - { path: ^/history/show, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
+        - { path: ^/history$, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
+        - { path: ^/history/new, roles: ['ROLE_ADMIN'] }
+        - { path: ^/history/.*/edit, roles: ['ROLE_ADMIN'] }
+        - { path: ^/history/.*/delete, roles: ['ROLE_ADMIN'] }
+        - { path: ^/history/.*/show, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
         - { path: ^/user/new, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
         - { path: ^/user/edit, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
         - { path: ^/user/show, roles: ['ROLE_ADMIN','ROLE_STAFF'] }

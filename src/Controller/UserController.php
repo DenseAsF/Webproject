@@ -242,6 +242,13 @@ public function new(
     #[Route('/{id}', name: 'user_show', requirements: ['id' => '\d+'])]
     public function show(User $user): Response
     {
+        // Prevent staff from viewing other users' profiles
+        $currentUser = $this->getUser();
+        if ($this->isGranted('ROLE_STAFF') && !$this->isGranted('ROLE_ADMIN') && $currentUser->getId() !== $user->getId()) {
+            $this->addFlash('error', 'You do not have permission to view other users\' profiles.');
+            return $this->redirectToRoute('customer_index');
+        }
+
         return $this->render('user/show.html.twig', [
             'user' => $user,
         ]);
@@ -256,6 +263,12 @@ public function edit(
     UserRepository $userRepo,
     ActivityLogger $activityLogger
 ): Response {
+    // Prevent staff from editing other users' profiles
+    $currentUser = $this->getUser();
+    if ($this->isGranted('ROLE_STAFF') && !$this->isGranted('ROLE_ADMIN') && $currentUser->getId() !== $user->getId()) {
+        $this->addFlash('error', 'You do not have permission to edit other users\' profiles.');
+        return $this->redirectToRoute('customer_index');
+    }
     $originalHash = $user->getPassword();
     $originalUsername = $user->getUsername();
     $originalEmail = $user->getEmail();

@@ -84,7 +84,7 @@
         <p class="text-gray-500 text-center py-4 helvetica-condensed">No additional services were selected</p>
     {% endif %}
 </div>
-
+    {% if is_granted('ROLE_ADMIN') %}
             <div class="bg-gray-50 p-6 rounded-lg">
                 <h2 class="text-xl font-semibold mb-4 text-[rgb(29,53,153)] helvetica-condensed">Actions</h2>
                 <div class="flex flex-col gap-3">
@@ -97,6 +97,7 @@
                     </form>
                 </div>
             </div>
+{% endif %}
         </div>
     </div>
 </div>
