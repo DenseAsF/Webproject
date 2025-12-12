@@ -1,20 +1,55 @@
-{% extends 'base.html.twig' %}
+{% extends 'adminbase.html.twig' %}
 
-{% block title %}Hello ServiceController!{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+<div class="max-w-7xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+    <div class="flex justify-between items-center mb-6 helvetica-condensed">
+        <h1 class="text-2xl font-bold">Services</h1>
+        <a href="{{ path('service_new') }}" data-turbo="false" class="helvetica-condensed bg-[rgb(29,53,153)] text-white px-4 py-2 rounded-md hover:bg-[rgb(242,182,34)] transition">
+            New Service
+        </a>
+    </div>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <div class="mb-4 helvetica-condensed">
+        <p class="text-sm text-gray-600">
+            Showing {{ services|length }} service(s)
+        </p>
+    </div>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/var/www/html/src/Controller/ServiceController.php</code></li>
-        <li>Your template at <code>/var/www/html/templates/service/index.html.twig</code></li>
-    </ul>
+    <div class="helvetica-condensed overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service Name</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for service in services %}
+                    <tr class="helvetica-condensed hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap font-medium">{{ service.id }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ service.name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">₱{{ service.price|number_format(2, '.', ',') }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap space-x-4 flex items-center">
+                            <a href="{{ path('service_show', {'id': service.id}) }}" data-turbo="false" class="text-blue-600 hover:text-blue-900 hover:underline">View</a>
+                            <a href="{{ path('service_edit', {'id': service.id}) }}" data-turbo="false" class="text-green-600 hover:text-green-900 hover:underline">Edit</a>
+                            <form action="{{ path('service_delete', {'id': service.id}) }}" method="post" class="inline" onsubmit="return confirm('Are you sure you want to delete this service?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ service.id) }}">
+                                <button type="submit" class="text-red-600 hover:text-red-900 hover:underline">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4" class="helvetica-condensed px-6 py-4 text-center text-gray-600">
+                            No services found. <a href="{{ path('service_new') }}" data-turbo="false" class="text-blue-600 hover:underline"></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

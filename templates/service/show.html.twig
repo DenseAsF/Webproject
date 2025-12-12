@@ -1,0 +1,47 @@
+{% extends 'adminbase.html.twig' %}
+
+{% block title %}Service #{{ service.id }}{% endblock %}
+
+{% block body %}
+<div class="max-w-7xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
+    <div class="flex justify-between items-center mb-6 helvetica-condensed">
+        <h1 class="text-2xl font-bold">Service Details</h1>
+        <div class="flex gap-2">
+            <a href="{{ path('service_edit', {'id': service.id}) }}" data-turbo="false" class="helvetica-condensed bg-[rgb(29,53,153)] text-white px-4 py-2 rounded-md hover:bg-[rgb(242,182,34)] transition">
+                Edit
+            </a>
+            <a href="{{ path('service_index') }}" data-turbo="false" class="helvetica-condensed bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition">
+                Back to List
+            </a>
+        </div>
+    </div>
+
+    <div class="helvetica-condensed">
+        <div class="bg-gray-50 rounded-lg p-6">
+            <dl class="grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-6">
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Service ID</dt>
+                    <dd class="mt-1 text-lg font-semibold text-gray-900">{{ service.id }}</dd>
+                </div>
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Service Name</dt>
+                    <dd class="mt-1 text-lg font-semibold text-gray-900">{{ service.name }}</dd>
+                </div>
+                <div class="sm:col-span-1">
+                    <dt class="text-sm font-medium text-gray-500">Price</dt>
+                    <dd class="mt-1 text-lg font-semibold text-gray-900">₱{{ service.price|number_format(2, '.', ',') }}</dd>
+                </div>
+            </dl>
+        </div>
+
+        <div class="mt-6 flex gap-4">
+            <form action="{{ path('service_delete', {'id': service.id}) }}" method="post" class="inline" onsubmit="return confirm('Are you sure you want to delete this service?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ service.id) }}">
+                <button type="submit" class="helvetica-condensed bg-red-600 text-white px-6 py-2 rounded-md hover:bg-red-700 transition">
+                    Delete Service
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

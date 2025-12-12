@@ -32,6 +32,7 @@ security:
         - { path: ^/user/profile, roles: ['ROLE_ADMIN','ROLE_STAFF','ROLE_USER'] }
         - { path: ^/user/profile/edit, roles: ['ROLE_ADMIN','ROLE_STAFF','ROLE_USER'] }
         - { path: ^/user/customer, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
+        - { path: ^/admin/service, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
         - { path: ^/booking, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
         - { path: ^/booking/new, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
         - { path: ^/room, roles: ['ROLE_ADMIN','ROLE_STAFF'] }

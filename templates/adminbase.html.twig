@@ -48,6 +48,12 @@
             Rooms
         </a>
 
+        <a href="{{ path('service_index') }}"
+           class="px-4 py-2 rounded hover:bg-[rgb(242,182,34)]
+           {% if app.request.attributes.get('_route') == 'service_index' %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">
+            Services
+        </a>
+
             <a href="{{ path('customer_index') }}"
            class="px-4 py-2 rounded hover:bg-[rgb(242,182,34)]
            {% if app.request.attributes.get('_route') == 'customer_index' %}bg-[rgb(242,182,34)] text-black font-semibold{% endif %}">

@@ -33,8 +33,8 @@
      class="hover:text-[rgb(242,182,34)] {% if app.request.attributes.get('_route') == 'about' %}text-[rgb(242,182,34)] font-semibold{% endif %}">
      About
   </a>
-    <a href="{{ path('service') }}" 
-     class="hover:text-[rgb(242,182,34)] {% if app.request.attributes.get('_route') == 'app_services' %}text-[rgb(242,182,34)] font-semibold{% endif %}">
+    <a href="{{ path('about') }}" 
+     class="hover:text-[rgb(242,182,34)] {% if app.request.attributes.get('_route') == 'about' %}text-[rgb(242,182,34)] font-semibold{% endif %}">
      Services
   </a>
   <a href="#rooms" class="hover:text-[rgb(242,182,34)]">Rooms</a>
