@@ -67,11 +67,11 @@ class BookingController extends AbstractController
         $qb->orderBy('b.checkInDate', 'ASC');
 
         $bookings = $qb->getQuery()->getResult();
-        $users = $userRepo->findAll(); // Changed from $customers
+        $users = $userRepo->findAll(); 
 
         return $this->render('booking/index.html.twig', [
             'bookings' => $bookings,
-            'customers' => $users, // Still passing as 'customers' for template compatibility
+            'customers' => $users, 
         ]);
     }
 
@@ -85,12 +85,12 @@ class BookingController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $account = $form->get('customerAccountNumber')->getData();
-                $user = $userRepo->findOneBy(['accountNumber' => $account]); // Changed from customer
+                $user = $userRepo->findOneBy(['accountNumber' => $account]); 
                 if (!$user) {
                     $this->addFlash('error', 'User not found.');
                     return $this->redirectToRoute('booking_new');
                 }
-                $booking->setUser($user); // Changed from setCustomer
+                $booking->setUser($user); 
 
                 $roomId = $form->get('roomId')->getData();
                 if (!$roomId) {
@@ -353,37 +353,84 @@ class BookingController extends AbstractController
     }
 
     #[Route('/history/{id}/edit', name: 'booking_history_edit', methods: ['GET','POST'])]
-    public function editHistory(BookingHistory $history, Request $request, EntityManagerInterface $em, ActivityLogger $activityLogger): Response
+    public function editHistory(BookingHistory $history, Request $request, EntityManagerInterface $em, ActivityLogger $activityLogger, BookingRepository $bookingRepo): Response
     {
         // Restrict access to admin only
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         
-        $form = $this->createFormBuilder($history)
-            ->add('customerName', \Symfony\Component\Form\Extension\Core\Type\TextType::class)
-            ->add('roomNumber', \Symfony\Component\Form\Extension\Core\Type\TextType::class)
-            ->add('checkInDate', \Symfony\Component\Form\Extension\Core\Type\DateTimeType::class, [
-                'widget' => 'single_text',
+        $originalStatus = $history->getStatus();
+        
+        // Create a simple form that only handles the status
+        $form = $this->createFormBuilder()
+            ->add('status', \Symfony\Component\Form\Extension\Core\Type\ChoiceType::class, [
+                'choices' => [
+                    'Checked In' => 'Checked In',
+                    'Checked Out' => 'Checked Out'
+                ],
+                'label' => 'Status',
+                'data' => $history->getStatus(),
+                'attr' => [
+                    'class' => 'mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md',
+                ]
             ])
-            ->add('checkOutDate', \Symfony\Component\Form\Extension\Core\Type\DateTimeType::class, [
-                'widget' => 'single_text',
-            ])
-            ->add('totalPrice', \Symfony\Component\Form\Extension\Core\Type\NumberType::class)
-            ->add('status', \Symfony\Component\Form\Extension\Core\Type\TextType::class)
             ->getForm();
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $newStatus = $form->get('status')->getData();
+            
+            // If changing from Checked Out to Checked In, move back to active bookings
+            if ($originalStatus === 'Checked Out' && $newStatus === 'Checked In') {
+                // Create a new booking from history
+                $booking = new Booking();
+                
+                // Find the user by name
+                $user = $em->getRepository(User::class)->findOneBy(['name' => $history->getCustomerName()]);
+                if (!$user) {
+                    $this->addFlash('error', 'User not found for this booking history.');
+                    return $this->redirectToRoute('booking_history_show', ['id' => $history->getId()]);
+                }
+                $booking->setUser($user);
+                
+                // Find the room by room number
+                $room = $em->getRepository(\App\Entity\Room::class)->findOneBy(['roomNumber' => $history->getRoomNumber()]);
+                if (!$room) {
+                    $this->addFlash('error', 'Room not found for this booking history.');
+                    return $this->redirectToRoute('booking_history_show', ['id' => $history->getId()]);
+                }
+                $booking->setRoom($room);
+                
+                $booking->setCheckInDate($history->getCheckInDate());
+                $booking->setCheckOutDate($history->getCheckOutDate());
+                $booking->setTotalPrice($history->getTotalPrice());
+                $booking->setStatus('Checked In');
+                
+              
+                $em->persist($booking);
+                
+   
+                $em->remove($history);
+                
+             
+                $em->flush();
+                
+                // $this->addFlash('success', 'Booking has been moved back to active bookings!');
+                return $this->redirectToRoute('booking_index');
+            }
+            
+           
+            $history->setStatus($newStatus);
             $em->flush();
 
             $activityLogger->log(
                 action: 'BOOKING_HISTORY_EDIT',
                 entityType: 'BookingHistory',
                 entityId: $history->getId(),
-                description: 'Edited booking history for ' . $history->getCustomerName()
+                description: 'Updated booking status to ' . $newStatus . ' for ' . $history->getCustomerName()
             );
 
-            $this->addFlash('success', 'Booking history updated successfully!');
+            $this->addFlash('success', 'Booking status updated successfully!');
             return $this->redirectToRoute('booking_history_show', ['id' => $history->getId()]);
         }
 
@@ -397,7 +444,7 @@ class BookingController extends AbstractController
     public function searchCustomer(Request $request, UserRepository $userRepo): Response // Changed to UserRepository
     {
         $term = strtoupper(trim($request->query->get('term', '')));
-        $users = $userRepo->createQueryBuilder('u') // Changed from 'c' to 'u'
+        $users = $userRepo->createQueryBuilder('u') 
             ->where('u.accountNumber LIKE :term')
             ->setParameter('term', $term . '%')
             ->setMaxResults(5)
@@ -405,7 +452,7 @@ class BookingController extends AbstractController
             ->getResult();
 
         $results = [];
-        foreach ($users as $user) { // Changed from $cust to $user
+        foreach ($users as $user) {
             $results[] = [
                 'label' => $user->getAccountNumber() . ' - ' . $user->getName(),
                 'value' => $user->getAccountNumber(),
@@ -438,7 +485,7 @@ class BookingController extends AbstractController
                    ->setParameter('startDate', $start)
                    ->setParameter('endDate', $end);
             } catch (\Exception $e) {
-                // Ignore date errors
+                
             }
         }
 
@@ -480,12 +527,12 @@ class BookingController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $account = $form->get('customerAccountNumber')->getData();
-                $user = $userRepo->findOneBy(['accountNumber' => $account]); // Changed from customer
+                $user = $userRepo->findOneBy(['accountNumber' => $account]); 
                 if (!$user) {
                     $this->addFlash('error', 'User not found.');
                     return $this->redirectToRoute('booking_edit', ['id' => $booking->getId()]);
                 }
-                $booking->setUser($user); // Changed from setCustomer
+                $booking->setUser($user); 
 
                 $roomId = $form->get('roomId')->getData();
                 if (!$roomId) {
@@ -573,7 +620,7 @@ class BookingController extends AbstractController
             $em->remove($booking);
             $em->flush();
 
-            // Log booking deletion (staff deletes a booking)
+           
             $activityLogger->log(
                 action: 'BOOKING_DELETE',
                 entityType: 'Booking',

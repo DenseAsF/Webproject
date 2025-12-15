@@ -1,10 +1,10 @@
 {% extends 'adminbase.html.twig' %}
 
-{% block title %}Edit History #{{ booking_history.id }}{% endblock %}
+{% block title %}Edit Booking #{{ booking_history.id }}{% endblock %}
 
 {% block body %}
 <div class="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
-    <h1 class="text-2xl font-bold mb-6 helvetica-condensed">Edit Booking History #{{ booking_history.id }}</h1>
+    <h1 class="text-2xl font-bold mb-6 helvetica-condensed">Update Booking Status</h1>
 
     {% for message in app.flashes('success') %}
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
@@ -12,51 +12,69 @@
         </div>
     {% endfor %}
 
+    <div class="bg-gray-50 p-4 rounded-lg mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <p class="text-sm text-gray-500">Customer</p>
+                <p class="font-medium">{{ booking_history.customerName }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-gray-500">Room Number</p>
+                <p class="font-medium">{{ booking_history.roomNumber }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-gray-500">Check In</p>
+                <p class="font-medium">{{ booking_history.checkInDate|date('Y-m-d H:i') }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-gray-500">Check Out</p>
+                <p class="font-medium">{{ booking_history.checkOutDate|date('Y-m-d H:i') }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-gray-500">Total Price</p>
+                <p class="font-medium">₱{{ booking_history.totalPrice|number_format(2) }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-gray-500">Current Status</p>
+                <p class="font-medium">
+                    <span class="px-2 py-1 text-xs rounded-full 
+                        {% if booking_history.status == 'Checked Out' %}
+                            bg-red-100 text-red-800
+                        {% else %}
+                            bg-yellow-100 text-yellow-800
+                        {% endif %}">
+                        {{ booking_history.status }}
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
+
     {{ form_start(form, {
         attr: {
-            class: 'space-y-4'
+            class: 'space-y-6'
         }
     }) }}
 
-        <div>
-            {{ form_label(form.customerName) }}
-            {{ form_widget(form.customerName, { attr: { class: 'mt-1 block w-full px-3 py-2 border rounded-md' } }) }}
-            {{ form_errors(form.customerName) }}
-        </div>
-
-        <div>
-            {{ form_label(form.roomNumber) }}
-            {{ form_widget(form.roomNumber, { attr: { class: 'mt-1 block w-full px-3 py-2 border rounded-md' } }) }}
-            {{ form_errors(form.roomNumber) }}
-        </div>
-
-        <div>
-            {{ form_label(form.checkInDate) }}
-            {{ form_widget(form.checkInDate, { attr: { class: 'mt-1 block w-full px-3 py-2 border rounded-md' } }) }}
-            {{ form_errors(form.checkInDate) }}
-        </div>
-
-        <div>
-            {{ form_label(form.checkOutDate) }}
-            {{ form_widget(form.checkOutDate, { attr: { class: 'mt-1 block w-full px-3 py-2 border rounded-md' } }) }}
-            {{ form_errors(form.checkOutDate) }}
-        </div>
-
-        <div>
-            {{ form_label(form.totalPrice) }}
-            {{ form_widget(form.totalPrice, { attr: { class: 'mt-1 block w-full px-3 py-2 border rounded-md' } }) }}
-            {{ form_errors(form.totalPrice) }}
-        </div>
-
-        <div>
-            {{ form_label(form.status) }}
-            {{ form_widget(form.status, { attr: { class: 'mt-1 block w-full px-3 py-2 border rounded-md' } }) }}
-            {{ form_errors(form.status) }}
+        <div class="border-t border-b border-gray-200 py-4">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Update Status</h3>
+            <div class="space-y-4">
+                <div>
+                    {{ form_label(form.status, 'Change status to:', { 'label_attr': { 'class': 'block text-sm font-medium text-gray-700 mb-1' }}) }}
+                    {{ form_widget(form.status) }}
+                    {{ form_errors(form.status) }}
+                    {% if booking_history.status == 'Checked Out' %}
+                        <p class="mt-2 text-sm text-gray-500">
+                            Changing status to 'Checked In' will move this booking back to active bookings.
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
         </div>
 
         <div class="flex gap-4 mt-6">
             <button type="submit" class="flex-1 bg-[rgb(29,53,153)] text-white py-2 px-4 rounded-md hover:bg-[rgb(242,182,34)] transition-colors font-medium">
-                Save Changes
+                Update Status
             </button>
             <a href="{{ path('booking_history_show', {'id': booking_history.id}) }}" class="flex-1 bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 transition-colors font-medium flex items-center justify-center no-underline">
                 Cancel
