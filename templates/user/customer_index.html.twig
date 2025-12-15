@@ -96,6 +96,7 @@
                                class="text-blue-600 hover:text-blue-900 hover:underline">
                                 View
                             </a>
+                         {% if is_granted('ROLE_ADMIN') %}
                             <a href="{{ path('user_edit', {'id': customer.id}) }}" 
                                class="text-green-600 hover:text-green-900 hover:underline">
                                 Edit
@@ -104,6 +105,7 @@
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ customer.id) }}">
                                 <button type="submit" class="text-red-600 hover:text-red-900 hover:underline">Delete</button>
                             </form>
+                             {% endif %}
                         </td>
                     </tr>
                 {% else %}
