@@ -26,6 +26,11 @@ security:
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
+        api_docs:
+            pattern: ^/api$|^/api/docs|^/api/contexts|^/api\.json$|^/api\.jsonld$
+            stateless: true
+            security: false
+
         api:
             pattern: ^/api
             stateless: true
@@ -44,6 +49,11 @@ security:
         
     access_control:
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api$, roles: PUBLIC_ACCESS }
+        - { path: ^/api/docs, roles: PUBLIC_ACCESS }
+        - { path: ^/api/contexts, roles: PUBLIC_ACCESS }
+        - { path: ^/api\.json$, roles: PUBLIC_ACCESS }
+        - { path: ^/api\.jsonld$, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/register, roles: PUBLIC_ACCESS }
         - { path: ^/login, roles: PUBLIC_ACCESS }
