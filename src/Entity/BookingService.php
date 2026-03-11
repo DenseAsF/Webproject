@@ -4,7 +4,9 @@ namespace App\Entity;
 
 use App\Repository\BookingServiceRepository;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
 
+#[ApiResource]
 #[ORM\Entity(repositoryClass: BookingServiceRepository::class)]
 class BookingService
 {

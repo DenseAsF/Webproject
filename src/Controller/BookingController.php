@@ -84,6 +84,21 @@ class BookingController extends AbstractController
       
         if ($form->isSubmitted() && $form->isValid()) {
             try {
+                // Validate that check-in and check-out dates are not in the past
+                $checkInDate = $booking->getCheckInDate();
+                $checkOutDate = $booking->getCheckOutDate();
+                $today = new \DateTime('today', new \DateTimeZone('UTC'));
+                
+                if ($checkInDate && $checkInDate < $today) {
+                    $this->addFlash('error', 'Check-in date cannot be in the past.');
+                    return $this->redirectToRoute('booking_new');
+                }
+                
+                if ($checkOutDate && $checkOutDate < $today) {
+                    $this->addFlash('error', 'Check-out date cannot be in the past.');
+                    return $this->redirectToRoute('booking_new');
+                }
+                
                 $account = $form->get('customerAccountNumber')->getData();
                 $user = $userRepo->findOneBy(['accountNumber' => $account]); 
                 if (!$user) {

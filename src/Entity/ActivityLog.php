@@ -5,7 +5,9 @@ namespace App\Entity;
 use App\Entity\User;
 use App\Repository\ActivityLogRepository;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
 
+#[ApiResource]
 #[ORM\Entity(repositoryClass: ActivityLogRepository::class)]
 #[ORM\Table(name: 'activity_log')]
 #[ORM\HasLifecycleCallbacks]

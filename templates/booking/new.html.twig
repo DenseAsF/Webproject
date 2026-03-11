@@ -201,6 +201,20 @@ function initBookingNewPage() {
             return;
         }
 
+        // Validate that dates are not in the past
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // Remove time component
+        
+        if (new Date(checkIn) < today) {
+            alert('Check-in date cannot be in the past.');
+            return;
+        }
+        
+        if (new Date(checkOut) < today) {
+            alert('Check-out date cannot be in the past.');
+            return;
+        }
+
         const url = `{{ path('booking_available_rooms') }}?checkIn=${encodeURIComponent(checkIn)}&checkOut=${encodeURIComponent(checkOut)}`;
 
         try {
@@ -279,6 +293,27 @@ function initBookingNewPage() {
 
   
     form.addEventListener('submit', function(e) {
+        const checkIn = checkInInput.value;
+        const checkOut = checkOutInput.value;
+        
+        // Validate that dates are not in the past
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // Remove time component
+        
+        if (checkIn && new Date(checkIn) < today) {
+            e.preventDefault();
+            alert('Check-in date cannot be in the past.');
+            checkInInput.focus();
+            return;
+        }
+        
+        if (checkOut && new Date(checkOut) < today) {
+            e.preventDefault();
+            alert('Check-out date cannot be in the past.');
+            checkOutInput.focus();
+            return;
+        }
+        
         if (!roomIdInput.value) {
             e.preventDefault();
             alert('Please select a room from the dropdown.');
