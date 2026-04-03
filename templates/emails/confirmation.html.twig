@@ -1,0 +1,61 @@
+{# templates/emails/confirmation.html.twig #}
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f6f8; font-family: Arial, sans-serif;">
+
+    <div style="max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+        
+        {# Header #}
+        <div style="background-color: rgb(29,53,153); padding: 40px 30px; text-align: center;">
+            <h1 style="font-family: 'Cinzel', serif; color: #ffffff; font-weight: 400; font-size: 28px; margin: 0;">
+                Hotel Diongco
+            </h1>
+            <p style="color: rgb(242,182,34); margin: 8px 0 0 0; font-size: 13px; letter-spacing: 0.1em;">
+                LUXURY & WARMTH
+            </p>
+        </div>
+
+        {# Body #}
+        <div style="padding: 40px 30px; text-align: center;">
+            <h2 style="font-family: 'Cinzel', serif; color: rgb(29,53,153); font-weight: 400; font-size: 22px;">
+                Welcome, <strong>{{ user.name }}</strong>!
+            </h2>
+            <p style="color: rgb(67,85,145); font-size: 15px; line-height: 1.7; margin: 20px 0;">
+                Thank you for registering with Hotel Diongco. Please verify your email address 
+                to activate your account and start enjoying our rewards program.
+            </p>
+
+            {# Button #}
+            <a href="{{ verifyUrl }}"
+               style="display: inline-block; margin: 20px 0; padding: 14px 36px;
+                      background-color: rgb(29,53,153); color: #ffffff;
+                      text-decoration: none; border-radius: 8px;
+                      font-size: 15px; font-weight: bold; letter-spacing: 0.05em;">
+                Verify My Email
+            </a>
+
+            <p style="color: #999999; font-size: 13px; margin-top: 30px;">
+                This link expires in <strong>1 hour</strong>. If you did not register, please ignore this email.
+            </p>
+        </div>
+
+        {# Divider #}
+        <div style="border-top: 1px solid #eeeeee; margin: 0 30px;"></div>
+
+        {# Footer #}
+        <div style="padding: 24px 30px; text-align: center; background-color: #f9f9f9;">
+            <p style="color: rgb(67,85,145); font-size: 13px; margin: 0;">
+                © 2026 Hotel Diongco · Dumaguete City
+            </p>
+            <p style="color: #bbbbbb; font-size: 12px; margin: 6px 0 0 0;">
+                Experience the perfect balance of luxury and warmth.
+            </p>
+        </div>
+
+    </div>
+
+</body>
+</html>

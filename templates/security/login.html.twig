@@ -21,7 +21,7 @@
             </div>
         {% endif %}
 
-        <form method="post" action="{{ path('login') }}">
+        <form method="post" action="{{ path('app_login') }}">
             {# ADD THIS LINE: CSRF Token #}
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
             

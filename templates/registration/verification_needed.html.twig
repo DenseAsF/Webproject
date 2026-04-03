@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Verify Your Email{% endblock %}
+
+{% block body %}
+
+<div class="flex justify-center items-center min-h-screen bg-gray-100">
+    <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-8">
+        <div class="text-center">
+            <!-- Icon -->
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-6">
+                <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+            </div>
+
+            <h2 style="font-family: 'Cinzel', serif;" class="font-thin font-bold text-2xl text-gray-900 mb-4">Check Your Email</h2>
+            
+            <p class="helvetica-condensed text-gray-600 mb-6">
+                We've sent a verification email to <strong>{{ user_email }}</strong>. 
+                Please check your inbox and click on verification link to activate your account.
+            </p>
+
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <h3 style="font-family: 'Cinzel', serif;" class="font-thin text-blue-900 mb-2">Important:</h3>
+                <ul class="helvetica-condensed text-sm text-blue-800 space-y-1">
+                    <li>• Check your spam folder if you don't see the email</li>
+                    <li>• The verification link will expire in 24 hours</li>
+                    <li>• You must verify your email before logging in</li>
+                </ul>
+            </div>
+
+            <div class="flex flex-col items-center space-y-3">
+                <a href="{{ path('app_login') }}" class="helvetica-condensed w-auto px-6 bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 rounded-lg text-center transition-colors">
+                    Back to Login
+                </a>
+                
+                <a href="{{ path('app_resend_verification', {'email': user_email}) }}" class="helvetica-condensed w-auto px-6 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-center transition-colors">
+                    Resend Verification Email
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

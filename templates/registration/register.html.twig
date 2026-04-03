@@ -18,56 +18,56 @@
         <div class="mb-3">
             {{ form_label(registrationForm.username, 'Username', {'label_attr': {'class': 'block text-gray-600 text-sm mb-1'}}) }}
             {{ form_widget(registrationForm.username, {'attr': {
-                'class': 'w-full border rounded px-3 py-2 text-sm',
+                'class': 'w-full border-2 border-blue-300 rounded px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200',
                 'required': 'required',
                 'autofocus': 'autofocus'
             }}) }}
-            {{ form_errors(registrationForm.username) }}
+            <div class="form-error">{{ form_errors(registrationForm.username) }}</div>
         </div>
 
         <div class="mb-3">
             {{ form_label(registrationForm.name, 'Full Name', {'label_attr': {'class': 'block text-gray-600 text-sm mb-1'}}) }}
             {{ form_widget(registrationForm.name, {'attr': {
-                'class': 'w-full border rounded px-3 py-2 text-sm',
+                'class': 'w-full border-2 border-blue-300 rounded px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200',
                 'required': 'required'
             }}) }}
-            {{ form_errors(registrationForm.name) }}
+            <div class="form-error">{{ form_errors(registrationForm.name) }}</div>
         </div>
 
         <div class="mb-3">
             {{ form_label(registrationForm.email, 'Email', {'label_attr': {'class': 'block text-gray-600 text-sm mb-1'}}) }}
             {{ form_widget(registrationForm.email, {'attr': {
-                'class': 'w-full border rounded px-3 py-2 text-sm',
+                'class': 'w-full border-2 border-blue-300 rounded px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200',
                 'required': 'required'
             }}) }}
-            {{ form_errors(registrationForm.email) }}
+            <div class="form-error">{{ form_errors(registrationForm.email) }}</div>
         </div>
 
         <div class="mb-3">
             {{ form_label(registrationForm.phone, 'Phone Number', {'label_attr': {'class': 'block text-gray-600 text-sm mb-1'}}) }}
             {{ form_widget(registrationForm.phone, {'attr': {
-                'class': 'w-full border rounded px-3 py-2 text-sm',
+                'class': 'w-full border-2 border-blue-300 rounded px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200',
                 'required': 'required'
             }}) }}
-            {{ form_errors(registrationForm.phone) }}
+            <div class="form-error">{{ form_errors(registrationForm.phone) }}</div>
         </div>
 
         <div class="mb-3">
             {{ form_label(registrationForm.age, 'Age', {'label_attr': {'class': 'block text-gray-600 text-sm mb-1'}}) }}
             {{ form_widget(registrationForm.age, {'attr': {
-                'class': 'w-full border rounded px-3 py-2 text-sm',
+                'class': 'w-full border-2 border-blue-300 rounded px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200',
                 'required': 'required'
             }}) }}
-            {{ form_errors(registrationForm.age) }}
+            <div class="form-error">{{ form_errors(registrationForm.age) }}</div>
         </div>
 
         <div class="mb-3">
             {{ form_label(registrationForm.plainPassword, 'Password', {'label_attr': {'class': 'block text-gray-600 text-sm mb-1'}}) }}
             {{ form_widget(registrationForm.plainPassword, {'attr': {
-                'class': 'w-full border rounded px-3 py-2 text-sm',
+                'class': 'w-full border-2 border-blue-300 rounded px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200',
                 'required': 'required'
             }}) }}
-            {{ form_errors(registrationForm.plainPassword) }}
+            <div class="form-error">{{ form_errors(registrationForm.plainPassword) }}</div>
         </div>
 
         <button
@@ -80,7 +80,7 @@
         {{ form_end(registrationForm) }}
         
         <div class="mt-4 text-center text-sm">
-            <p>Already have an account? <a href="{{ path('login') }}" class="text-blue-600 hover:underline">Sign In</a></p>
+            <p>Already have an account? <a href="{{ path('app_login') }}" class="text-blue-600 hover:underline">Sign In</a></p>
         </div>
     </div>
 </div>

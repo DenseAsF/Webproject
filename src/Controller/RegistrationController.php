@@ -14,87 +14,106 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 use App\Security\CustomAuthenticator;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+// ADD THESE 2 NEW IMPORTS:
+use App\Service\EmailVerificationService;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class RegistrationController extends AbstractController
 {
-    #[Route('/register', name: 'app_register')]
+    // ADD THIS CONSTRUCTOR:
+    public function __construct(
+        private EmailVerificationService $verificationService,
+        private UrlGeneratorInterface $urlGenerator
+    ) {}
+
+    #[Route('/api/register', name: 'api_register', methods: ['POST'])]
     public function register(
         Request $request,
         UserPasswordHasherInterface $userPasswordHasher,
         EntityManagerInterface $entityManager,
         UserRepository $userRepository,
-        UserAuthenticatorInterface $userAuthenticator,
-        CustomAuthenticator $authenticator
-    ): Response {
-        // Redirect if already logged in
-        if ($this->getUser()) {
-            return $this->redirectToRoute('user_profile');
+        ValidatorInterface $validator
+    ): JsonResponse {
+        $data = json_decode($request->getContent(), true);
+        
+        if (!$data) {
+            return new JsonResponse(['error' => 'Invalid JSON'], 400);
         }
 
         $user = new User();
-        $form = $this->createForm(RegistrationFormType::class, $user);
-        $form->handleRequest($request);
+        $user->setUsername($data['username'] ?? '');
+        $user->setEmail($data['email'] ?? '');
+        $user->setPhone($data['phone'] ?? '');
+        $user->setName($data['name'] ?? '');
+        $user->setAge($data['age'] ?? 0);
+        $user->setPlainPassword($data['password'] ?? '');
 
-        if ($form->isSubmitted()) {
-            // Validate unique fields manually for better error messages
-            $hasErrors = false;
-            
-            // Check username uniqueness
-            $existingUser = $userRepository->findOneBy(['username' => $user->getUsername()]);
-            if ($existingUser) {
-                $form->get('username')->addError(new \Symfony\Component\Form\FormError('Username already exists'));
-                $hasErrors = true;
+        $errors = $validator->validate($user);
+        if (count($errors) > 0) {
+            $errorMessages = [];
+            foreach ($errors as $error) {
+                $errorMessages[$error->getPropertyPath()] = $error->getMessage();
             }
-
-            // Check email uniqueness
-            $existingEmail = $userRepository->findOneBy(['email' => $user->getEmail()]);
-            if ($existingEmail) {
-                $form->get('email')->addError(new \Symfony\Component\Form\FormError('Email already registered'));
-                $hasErrors = true;
-            }
-
-            if (!$hasErrors && $form->isValid()) {
-                // Generate unique account number
-                $user->setAccountNumber($this->generateUniqueAccountNumber($userRepository));
-                
-                // Hash the password
-                $user->setPassword(
-                    $userPasswordHasher->hashPassword(
-                        $user,
-                        $form->get('plainPassword')->getData()
-                    )
-                );
-
-                // Set USER role only
-                $user->setRoles(['ROLE_USER']);
-                $user->setEnabled(true);
-
-                // Create associated points entity
-                $points = new Points();
-                $points->setTotalPoints(0);
-                $points->setUser($user);
-
-                // Persist to database
-                $entityManager->persist($user);
-                $entityManager->persist($points);
-                $entityManager->flush();
-
-                // Auto-login the user
-                $userAuthenticator->authenticateUser(
-                    $user,
-                    $authenticator,
-                    $request
-                );
-
-                // Redirect to profile page
-                return new RedirectResponse($this->generateUrl('user_profile'));
-            }
+            return new JsonResponse(['errors' => $errorMessages], 400);
         }
 
-        return $this->render('registration/register.html.twig', [
-            'registrationForm' => $form->createView(),
-        ]);
+        $existingUser = $userRepository->findOneBy(['username' => $user->getUsername()]);
+        if ($existingUser) {
+            return new JsonResponse(['error' => 'Username already exists'], 400);
+        }
+
+        $existingEmail = $userRepository->findOneBy(['email' => $user->getEmail()]);
+        if ($existingEmail) {
+            return new JsonResponse(['error' => 'Email already registered'], 400);
+        }
+
+        $user->setAccountNumber($this->generateUniqueAccountNumber($userRepository));
+        
+        $user->setPassword(
+            $userPasswordHasher->hashPassword(
+                $user,
+                $data['password']
+            )
+        );
+
+        $user->setRoles(['ROLE_USER']);
+        $user->setEnabled(true);
+        // ADD THIS — explicitly mark as not verified:
+        $user->setIsVerified(false);
+        $user->setCreatedAt(new \DateTime());
+
+        $points = new Points();
+        $points->setTotalPoints(0);
+        $points->setUser($user);
+
+        $entityManager->persist($user);
+        $entityManager->persist($points);
+        $entityManager->flush();
+
+        // ADD THIS BLOCK — send verification email:
+        try {
+            $verifyUrl = $this->verificationService->generateVerifyUrl(
+                $user,
+                'app_verify_email',
+                ['id' => $user->getId()]
+            );
+            $this->verificationService->sendVerificationEmail($user, $verifyUrl);
+        } catch (\Exception $e) {
+            // Don't fail registration if email sending fails
+        }
+
+        return new JsonResponse([
+            'message' => 'User registered successfully. Please check your email to verify your account.',
+            'user' => [
+                'id' => $user->getId(),
+                'username' => $user->getUsername(),
+                'email' => $user->getEmail(),
+                'accountNumber' => $user->getAccountNumber(),
+                'isVerified' => $user->isVerified()
+            ]
+        ], 201);
     }
 
     private function generateUniqueAccountNumber(UserRepository $repository): string

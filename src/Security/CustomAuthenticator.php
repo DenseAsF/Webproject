@@ -22,7 +22,7 @@ class CustomAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
 
-    public const LOGIN_ROUTE = 'login';
+    public const LOGIN_ROUTE = 'app_login';
 
     public function __construct(private UrlGeneratorInterface $urlGenerator, private UserRepository $userRepository)
     {
@@ -46,6 +46,10 @@ class CustomAuthenticator extends AbstractLoginFormAuthenticator
 
                 if (method_exists($user, 'isEnabled') && !$user->isEnabled()) {
                     throw new CustomUserMessageAuthenticationException('Your account has been disabled. Please contact the administrator.');
+                }
+
+                if (method_exists($user, 'isVerified') && !$user->isVerified()) {
+                    throw new CustomUserMessageAuthenticationException('Please verify your email address before logging in. Check your inbox for the verification link.');
                 }
 
                 return $user;
