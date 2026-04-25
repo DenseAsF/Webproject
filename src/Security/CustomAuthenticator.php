@@ -49,6 +49,7 @@ class CustomAuthenticator extends AbstractLoginFormAuthenticator
                 }
 
                 if (method_exists($user, 'isVerified') && !$user->isVerified()) {
+                    error_log('CustomAuth: User ' . $user->getEmail() . ' isVerified=false, blocking login');
                     throw new CustomUserMessageAuthenticationException('Please verify your email address before logging in. Check your inbox for the verification link.');
                 }
 

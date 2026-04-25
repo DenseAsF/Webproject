@@ -7,6 +7,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use App\Repository\UserRepository;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Post;
 use App\State\UserRegistrationProcessor;
@@ -23,7 +24,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
-    private string $username;
+    private ?string $username = null;
 
     #[ORM\Column(type: 'json')]
     private array $roles = [];
@@ -65,14 +66,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->createdAt = new \DateTime();
         $this->roles = ['ROLE_USER'];
         $this->enabled = true;
+        $this->username = '';
     }
 
     public function getId(): ?int { return $this->id; }
 
     public function getUserIdentifier(): string { return $this->username; }
 
-    public function getUsername(): string { return $this->username; }
-    public function setUsername(string $username): self { $this->username = $username; return $this; }
+    public function getUsername(): string { return $this->username ?? ''; }
+    public function setUsername(?string $username): self { $this->username = $username ?? ''; return $this; }
 
     public function getRoles(): array {
         $roles = $this->roles;
@@ -84,19 +86,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setRoles(array $roles): self { $this->roles = $roles; return $this; }
 
-    public function getPassword(): string { return $this->password; }
-    public function setPassword(string $password): self { $this->password = $password; return $this; }
+    public function getPassword(): string { return $this->password ?? ''; }
+    public function setPassword(?string $password): self { $this->password = $password ?? ''; return $this; }
 
     public function eraseCredentials(): void { $this->plainPassword = null; }
 
-    public function getEmail(): string { return $this->email; }
-    public function setEmail(string $email): self { $this->email = $email; return $this; }
+    public function getEmail(): string { return $this->email ?? ''; }
+    public function setEmail(?string $email): self { $this->email = $email ?? ''; return $this; }
 
-    public function getPhone(): string { return $this->phone; }
-    public function setPhone(string $phone): self { $this->phone = $phone; return $this; }
+    public function getPhone(): string { return $this->phone ?? ''; }
+    public function setPhone(?string $phone): self { $this->phone = $phone ?? ''; return $this; }
 
-    public function getName(): string { return $this->name; }
-    public function setName(string $name): self { $this->name = $name; return $this; }
+    public function getName(): string { return $this->name ?? ''; }
+    public function setName(?string $name): self { $this->name = $name ?? ''; return $this; }
 
     public function getAge(): int { return $this->age; }
     public function setAge(int $age): self { $this->age = $age; return $this; }

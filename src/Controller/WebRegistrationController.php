@@ -134,7 +134,6 @@ class WebRegistrationController extends AbstractController
         $em->flush();
 
         $this->addFlash('success', 'Your email has been verified! You can now log in.');
-        $this->addFlash('info', 'clear_all'); // Clear any existing flash messages
         return $this->redirectToRoute('app_login');
     }
 

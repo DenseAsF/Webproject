@@ -4,14 +4,20 @@
 
 {% block body %}
 
-<div class="flex justify-center items-center min-h-screen bg-gray-100">
-    <div class="w-xl max-w-xl bg-white rounded-xl shadow-lg p-6">
+<div class="relative min-h-screen flex justify-center items-center">
+    
+    <div class="absolute inset-0">
+        <div class="w-full h-full bg-cover bg-center" style="background-image: linear-gradient(rgba(0, 20, 77, 0.6), rgba(0,1,34,0.6)), url('{{ asset('images/hotelpatterned.png') }}')"></div>
+    </div>
+
+    <div class="relative w-full max-w-xl bg-white rounded-xl shadow-lg p-6 z-10">
         <h2 class="text-xl font-bold mb-5 text-center">Create Account</h2>
 
         {{ form_start(registrationForm, {
             'attr': {
                 'data-turbo': 'false',
-                'novalidate': 'novalidate'
+                'novalidate': 'novalidate',
+                'onsubmit': 'return validateForm(event)'
             }
         }) }}
         
@@ -20,9 +26,18 @@
             {{ form_widget(registrationForm.username, {'attr': {
                 'class': 'w-full border-2 border-blue-300 rounded px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200',
                 'required': 'required',
-                'autofocus': 'autofocus'
+                'autofocus': 'autofocus',
+                'id': 'username',
+                'oninput': 'clearUsernameError()'
             }}) }}
-            <div class="form-error">{{ form_errors(registrationForm.username) }}</div>
+            <div id="username-error" class="text-red-600 text-sm mt-1 font-medium hidden"></div>
+            {% if registrationForm.username.vars.errors|length > 0 %}
+                <div class="text-red-600 text-sm mt-1 font-medium">
+                    {% for error in registrationForm.username.vars.errors %}
+                        {{ error.message }}
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
 
         <div class="mb-3">
@@ -31,7 +46,13 @@
                 'class': 'w-full border-2 border-blue-300 rounded px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200',
                 'required': 'required'
             }}) }}
-            <div class="form-error">{{ form_errors(registrationForm.name) }}</div>
+            {% if registrationForm.name.vars.errors|length > 0 %}
+                <div class="text-red-600 text-sm mt-1 font-medium">
+                    {% for error in registrationForm.name.vars.errors %}
+                        {{ error.message }}
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
 
         <div class="mb-3">
@@ -40,7 +61,13 @@
                 'class': 'w-full border-2 border-blue-300 rounded px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200',
                 'required': 'required'
             }}) }}
-            <div class="form-error">{{ form_errors(registrationForm.email) }}</div>
+            {% if registrationForm.email.vars.errors|length > 0 %}
+                <div class="text-red-600 text-sm mt-1 font-medium">
+                    {% for error in registrationForm.email.vars.errors %}
+                        {{ error.message }}
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
 
         <div class="mb-3">
@@ -49,7 +76,13 @@
                 'class': 'w-full border-2 border-blue-300 rounded px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200',
                 'required': 'required'
             }}) }}
-            <div class="form-error">{{ form_errors(registrationForm.phone) }}</div>
+            {% if registrationForm.phone.vars.errors|length > 0 %}
+                <div class="text-red-600 text-sm mt-1 font-medium">
+                    {% for error in registrationForm.phone.vars.errors %}
+                        {{ error.message }}
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
 
         <div class="mb-3">
@@ -58,7 +91,13 @@
                 'class': 'w-full border-2 border-blue-300 rounded px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200',
                 'required': 'required'
             }}) }}
-            <div class="form-error">{{ form_errors(registrationForm.age) }}</div>
+            {% if registrationForm.age.vars.errors|length > 0 %}
+                <div class="text-red-600 text-sm mt-1 font-medium">
+                    {% for error in registrationForm.age.vars.errors %}
+                        {{ error.message }}
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
 
         <div class="mb-3">
@@ -67,7 +106,13 @@
                 'class': 'w-full border-2 border-blue-300 rounded px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200',
                 'required': 'required'
             }}) }}
-            <div class="form-error">{{ form_errors(registrationForm.plainPassword) }}</div>
+            {% if registrationForm.plainPassword.vars.errors|length > 0 %}
+                <div class="text-red-600 text-sm mt-1 font-medium">
+                    {% for error in registrationForm.plainPassword.vars.errors %}
+                        {{ error.message }}
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
 
         <button
@@ -85,47 +130,73 @@
     </div>
 </div>
 
-<style>
-    .form-error {
-        color: #dc3545 !important;
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
-        display: block;
-        font-weight: 500;
-    }
-    
-    .invalid-feedback {
-        color: #dc3545 !important;
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
-        display: block;
-        font-weight: 500;
-    }
-    
-    .is-invalid {
-        border-color: #dc3545 !important;
-        background-color: #fff5f5 !important;
-    }
-    
-    input.is-invalid:focus {
-        border-color: #dc3545 !important;
-        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
-    }
-</style>
-
 <script>
+function validateForm(event) {
+    const usernameInput = document.getElementById('username');
+    const usernameError = document.getElementById('username-error');
+    const usernameValue = usernameInput.value.trim();
+    
+    // Check if username is empty
+    if (usernameValue === '') {
+        event.preventDefault(); // Prevent form submission
+        usernameError.textContent = 'Username cannot be empty. Please enter a username.';
+        usernameError.classList.remove('hidden');
+        usernameInput.classList.add('border-red-500', 'focus:border-red-500');
+        usernameInput.focus();
+        return false;
+    }
+    
+    // Additional validation: check for minimum length (optional)
+    if (usernameValue.length < 3) {
+        event.preventDefault();
+        usernameError.textContent = 'Username must be at least 3 characters long.';
+        usernameError.classList.remove('hidden');
+        usernameInput.classList.add('border-red-500', 'focus:border-red-500');
+        usernameInput.focus();
+        return false;
+    }
+    
+    // Clear any existing errors
+    clearUsernameError();
+    return true;
+}
+
+function clearUsernameError() {
+    const usernameInput = document.getElementById('username');
+    const usernameError = document.getElementById('username-error');
+    
+    if (usernameError) {
+        usernameError.textContent = '';
+        usernameError.classList.add('hidden');
+    }
+    
+    if (usernameInput) {
+        usernameInput.classList.remove('border-red-500', 'focus:border-red-500');
+        usernameInput.classList.add('border-blue-300');
+    }
+}
+
+// Optional: Add real-time validation as user types
 document.addEventListener('DOMContentLoaded', function() {
-    // Add error styling to form fields
-    const formErrors = document.querySelectorAll('.form-error');
-    formErrors.forEach(function(error) {
-        error.classList.add('invalid-feedback');
-        // Find the input field (previous element sibling)
-        const field = error.previousElementSibling;
-        if (field && (field.tagName === 'INPUT' || field.tagName === 'SELECT' || field.tagName === 'TEXTAREA')) {
-            field.classList.add('is-invalid');
-        }
-    });
+    const usernameInput = document.getElementById('username');
+    if (usernameInput) {
+        usernameInput.addEventListener('input', function() {
+            if (this.value.trim() !== '') {
+                clearUsernameError();
+            }
+        });
+    }
 });
 </script>
+
+<style>
+.border-red-500 {
+    border-color: #ef4444 !important;
+}
+
+.focus\:border-red-500:focus {
+    border-color: #ef4444 !important;
+}
+</style>
 
 {% endblock %}

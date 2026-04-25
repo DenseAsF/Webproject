@@ -44,17 +44,24 @@
      class="hover:text-[rgb(242,182,34)] {% if app.request.attributes.get('_route') == 'about' %}text-[rgb(242,182,34)] font-semibold{% endif %}">
      About
   </a>
-    <a href="{{ path('about') }}" 
-     class="hover:text-[rgb(242,182,34)] {% if app.request.attributes.get('_route') == 'about' %}text-[rgb(242,182,34)] font-semibold{% endif %}">
-     Services
-  </a>
-  <a href="#rooms" class="hover:text-[rgb(242,182,34)]">Rooms</a>
+  
+  
 
-  <a href="#contact" class="hover:text-[rgb(242,182,34)]">Contact</a>
+  <a href="{{ path('app_contact') }}" 
+     class="hover:text-[rgb(242,182,34)] {% if app.request.attributes.get('_route') == 'app_contact' %}text-[rgb(242,182,34)] font-semibold{% endif %}">
+     Contact</a>
 
    <a href="{{ path('app_login') }}" 
-     class="font-bold hover:text-[rgb(242,182,34)] {% if app.request.attributes.get('_route') == 'app_login' %}text-[rgb(242,182,34)] {% endif %}">
+     class="font-bold hover:text-[rgb(242,182,34)] {% if app.request.attributes.get('_route') == 'app_login' %}text-[rgb(242,182,34)] font-semibold{% endif %}">
      Log In</a>
+
+
+ <a>
+     or</a>
+     
+  <a href="{{ path('app_register') }}" 
+     class="font-bold hover:text-[rgb(242,182,34)] {% if app.request.attributes.get('_route') == 'app_register' %}text-[rgb(242,182,34)] font-semibold{% endif %}">
+     Sign Up</a>
 </nav>
 
         <a href="{{ path('homepage') }}" class="bg-[rgb(29,53,153)] hover:bg-[rgb(242,182,34)] transition-colors text-white px-4 py-2 rounded-lg">Book Now</a>
@@ -67,7 +74,7 @@
     {% block body %}{% endblock %}
   </main>
 
-  <footer class="bg-white mt-16 border-t">
+  <footer class="bg-white mt-16">
     <div class="container mx-auto px-6 py-10 grid md:grid-cols-3 gap-6">
       <div>
         <h3 class="helvetica-condensed">{{ business.name }}</h3>

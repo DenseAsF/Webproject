@@ -16,13 +16,13 @@ use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 use App\Security\CustomAuthenticator;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-// ADD THESE 2 NEW IMPORTS:
+
 use App\Service\EmailVerificationService;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class RegistrationController extends AbstractController
 {
-    // ADD THIS CONSTRUCTOR:
+  
     public function __construct(
         private EmailVerificationService $verificationService,
         private UrlGeneratorInterface $urlGenerator

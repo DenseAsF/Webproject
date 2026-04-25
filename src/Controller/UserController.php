@@ -18,11 +18,16 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use App\Service\EmailVerificationService;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route('/user')]
 class UserController extends AbstractController
 {
+    public function __construct(
+        private EmailVerificationService $verificationService,
+        private UrlGeneratorInterface $urlGenerator
+    ) {}
     #[Route('/', name: 'user_index', methods: ['GET'])]
     public function index(UserRepository $repo, Request $request): Response
     {
@@ -190,6 +195,7 @@ public function new(
                 $user->setRoles($roles);
 
                 $user->setCreatedAt(new \DateTime());
+                $user->setIsVerified(false); // Set as not verified initially
 
                 $points = new Points();
                 $points->setTotalPoints(0);
@@ -198,6 +204,19 @@ public function new(
                 $em->persist($user);
                 $em->persist($points);
                 $em->flush();
+
+                // Send verification email
+                try {
+                    $verifyUrl = $this->verificationService->generateVerifyUrl(
+                        $user,
+                        'app_verify_email',
+                        ['id' => $user->getId()]
+                    );
+                    $this->verificationService->sendVerificationEmail($user, $verifyUrl);
+                    $this->addFlash('success', 'User created successfully! Verification email sent to ' . $user->getEmail());
+                } catch (\Exception $e) {
+                    $this->addFlash('warning', 'User created successfully but verification email could not be sent. Please check email configuration.');
+                }
 
                 // Log admin creates a user
                 $activityLogger->log(
@@ -463,13 +482,24 @@ public function customerIndex(UserRepository $repo, Request $request): Response
     #[Route('/{id}/delete', name: 'user_delete', requirements: ['id' => '\d+'])]
     public function delete(Request $request, User $user, EntityManagerInterface $em, ActivityLogger $activityLogger): Response
     {
-        // Prevent staff from deleting staff or admin users
+       
+        if ($request->headers->get('Authorization')) {
+            
+            if (!$this->isGranted('ROLE_ADMIN')) {
+                return $this->json(['error' => 'Only administrators can delete users'], 403);
+            }
+        }
+
+      
         if (!$this->isGranted('ROLE_ADMIN')) {
             $targetRoles = $user->getRoles();
             if (in_array('ROLE_ADMIN', $targetRoles) || in_array('ROLE_STAFF', $targetRoles)) {
                 $this->addFlash('error', 'You cannot delete staff or admin accounts.');
                 return $this->redirectToRoute('customer_index');
             }
+           
+            $this->addFlash('error', 'Only administrators can delete users.');
+            return $this->redirectToRoute('customer_index');
         }
 
         if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
@@ -478,7 +508,7 @@ public function customerIndex(UserRepository $repo, Request $request): Response
             $em->remove($user);
             $em->flush();
 
-            // Log admin deletes a user
+            
             $activityLogger->log(
                 action: 'USER_DELETE',
                 entityType: 'User',
@@ -495,6 +525,7 @@ public function customerIndex(UserRepository $repo, Request $request): Response
     }
 
     #[Route('/{id}/disable', name: 'user_disable', requirements: ['id' => '\d+'], methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function disable(User $user, EntityManagerInterface $em, ActivityLogger $activityLogger): Response
     {
         $currentUser = $this->getUser();

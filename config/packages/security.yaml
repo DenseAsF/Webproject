@@ -19,6 +19,7 @@ security:
         api_login:
             pattern: ^/api/login
             stateless: true
+            user_checker: App\Security\UserChecker
             json_login:
                 check_path: /api/login
                 username_path: username
@@ -39,7 +40,10 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-            custom_authenticator: App\Security\CustomAuthenticator
+            user_checker: App\Security\UserChecker
+            custom_authenticator: 
+                - App\Security\GoogleAuthenticator
+                - App\Security\CustomAuthenticator
             stateless: false
             logout:
                 path: app_logout
@@ -48,6 +52,7 @@ security:
 
         
     access_control:
+        - { path: ^/connect, roles: PUBLIC_ACCESS }
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
         - { path: ^/api$, roles: PUBLIC_ACCESS }
@@ -55,6 +60,10 @@ security:
         - { path: ^/api/contexts, roles: PUBLIC_ACCESS }
         - { path: ^/api\.json$, roles: PUBLIC_ACCESS }
         - { path: ^/api\.jsonld$, roles: PUBLIC_ACCESS }
+        - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/register, roles: PUBLIC_ACCESS }
+        - { path: ^/api/users/\d+$, roles: ROLE_ADMIN, methods: [DELETE] }
+        - { path: ^/api/users, roles: ['ROLE_ADMIN','ROLE_STAFF'] }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/register, roles: PUBLIC_ACCESS }
         - { path: ^/login, roles: PUBLIC_ACCESS }
